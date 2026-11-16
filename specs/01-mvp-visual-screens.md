@@ -1,6 +1,6 @@
 # SPEC 01 — MVP visual de Arcade Vault
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** Ninguna (parte del scaffold de Next.js y del tema ya portado a `app/globals.css`)
 > **Date:** 2026-11-16
 > **Objective:** Implementar en Next.js las cinco pantallas de `references/templates/` (biblioteca, detalle, reproductor, acceso y salón de la fama) solo a nivel visual, con datos ficticios y sin ningún juego real.
@@ -104,31 +104,31 @@ Cada paso deja la app arrancando con `npm run dev` y es commiteable por separado
 
 ## Criterios de aceptación
 
-- [ ] `npm run lint` termina sin errores.
-- [ ] `npm run build` termina sin errores.
-- [ ] `/` muestra el hero, el buscador, los 5 chips de categoría y las 8 tarjetas de juego.
-- [ ] Escribir `xyz` en el buscador de `/` muestra "NO HAY RESULTADOS" y 0 tarjetas.
-- [ ] Pulsar el chip `PUZZLE` deja solo la tarjeta de CAÍDA.
-- [ ] Pulsar una tarjeta o su botón "JUGAR" navega a `/games/<id>` de ese juego.
-- [ ] `/games/caida` muestra el título, la descripción larga, las 3 estadísticas y 10 filas de leaderboard con las 3 primeras destacadas.
-- [ ] `/games/no-existe` muestra la página 404 de Next.js.
-- [ ] "JUGAR AHORA" lleva a `/games/<id>/play` y "VOLVER AL VAULT" lleva a `/`.
-- [ ] En `/games/<id>/play` la puntuación aumenta sola y deja de aumentar al pulsar PAUSA, con el texto "EN PAUSA" visible.
-- [ ] Pulsar FIN abre el modal con la puntuación acumulada.
-- [ ] "GUARDAR PUNTUACIÓN" añade un registro a `localStorage["av_scores"]` y muestra "PUNTUACIÓN GUARDADA".
-- [ ] "JUGAR DE NUEVO" reinicia puntuación, vidas y nivel y cierra el modal.
-- [ ] "SALIR" en el reproductor lleva a `/games/<id>`.
-- [ ] En `/auth`, la pestaña "CREAR CUENTA" muestra el campo de correo y la de "INICIAR SESIÓN" lo oculta.
-- [ ] Enviar el formulario con usuario `neo` guarda `{"name":"NEO"}` en `localStorage["av_user"]`, redirige a `/` y el nav muestra `NEO ▾`.
-- [ ] Pulsar el nombre del usuario en el nav cierra la sesión y el nav vuelve a mostrar "Iniciar Sesión".
-- [ ] "JUGAR COMO INVITADO" redirige a `/` sin usuario en `localStorage`.
-- [ ] Recargar la página con sesión iniciada mantiene el nombre en el nav sin errores de hidratación en la consola.
-- [ ] `/hall-of-fame` muestra 8 pestañas, un podio con el campeón en el centro y una tabla de 12 filas.
-- [ ] Cambiar de pestaña en `/hall-of-fame` cambia el podio y la tabla.
-- [ ] La fila "TU MEJOR MARCA EN <juego>" aparece solo con sesión iniciada.
-- [ ] El enlace activo del nav se resalta en `/` (y en `/games/*`) y en `/hall-of-fame`.
-- [ ] A 375 px de ancho aparece el botón hamburguesa, el panel móvil se abre y se cierra y no hay scroll horizontal.
-- [ ] La consola del navegador no muestra errores ni avisos de React en ninguna de las cinco rutas.
+- [x] `npm run lint` termina sin errores.
+- [x] `npm run build` termina sin errores.
+- [x] `/` muestra el hero, el buscador, los 5 chips de categoría y las 8 tarjetas de juego.
+- [x] Escribir `xyz` en el buscador de `/` muestra "NO HAY RESULTADOS" y 0 tarjetas.
+- [x] Pulsar el chip `PUZZLE` deja solo la tarjeta de CAÍDA.
+- [x] Pulsar una tarjeta o su botón "JUGAR" navega a `/games/<id>` de ese juego.
+- [x] `/games/caida` muestra el título, la descripción larga, las 3 estadísticas y 10 filas de leaderboard con las 3 primeras destacadas.
+- [x] `/games/no-existe` muestra la página 404 de Next.js.
+- [x] "JUGAR AHORA" lleva a `/games/<id>/play` y "VOLVER AL VAULT" lleva a `/`.
+- [x] En `/games/<id>/play` la puntuación aumenta sola y deja de aumentar al pulsar PAUSA, con el texto "EN PAUSA" visible.
+- [x] Pulsar FIN abre el modal con la puntuación acumulada.
+- [x] "GUARDAR PUNTUACIÓN" añade un registro a `localStorage["av_scores"]` y muestra "PUNTUACIÓN GUARDADA".
+- [x] "JUGAR DE NUEVO" reinicia puntuación, vidas y nivel y cierra el modal.
+- [x] "SALIR" en el reproductor lleva a `/games/<id>`.
+- [x] En `/auth`, la pestaña "CREAR CUENTA" muestra el campo de correo y la de "INICIAR SESIÓN" lo oculta.
+- [x] Enviar el formulario con usuario `neo` guarda `{"name":"NEO"}` en `localStorage["av_user"]`, redirige a `/` y el nav muestra `NEO ▾`.
+- [x] Pulsar el nombre del usuario en el nav cierra la sesión y el nav vuelve a mostrar "Iniciar Sesión".
+- [x] "JUGAR COMO INVITADO" redirige a `/` sin usuario en `localStorage`.
+- [x] Recargar la página con sesión iniciada mantiene el nombre en el nav sin errores de hidratación en la consola.
+- [x] `/hall-of-fame` muestra 8 pestañas, un podio con el campeón en el centro y una tabla de 12 filas.
+- [x] Cambiar de pestaña en `/hall-of-fame` cambia el podio y la tabla.
+- [x] La fila "TU MEJOR MARCA EN <juego>" aparece solo con sesión iniciada.
+- [x] El enlace activo del nav se resalta en `/` (y en `/games/*`) y en `/hall-of-fame`.
+- [x] A 375 px de ancho aparece el botón hamburguesa, el panel móvil se abre y se cierra y no hay scroll horizontal.
+- [x] La consola del navegador no muestra errores ni avisos de React en ninguna de las cinco rutas.
 
 ---
 

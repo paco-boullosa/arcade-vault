@@ -8,16 +8,11 @@ Arcade Vault: an online platform to play games and compete for the highest score
 
 Currently a fresh `create-next-app` scaffold (single `app/page.tsx`, default metadata in `app/layout.tsx`).
 
-## Commands
-
-```bash
-npm run dev     # next dev (Turbopack)
-npm run build   # next build
-npm run start   # next start
-npm run lint    # eslint (flat config in eslint.config.mjs)
-```
-
 No test runner is configured.
+
+## Skills
+
+Usa siempre /frontend-design para diseñar la interfaz de usuario.
 
 ## Stack and gotchas
 

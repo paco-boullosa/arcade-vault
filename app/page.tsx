@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import { getGames } from "./data/games";
-import LibraryView from "./components/LibraryView";
+import { getRecentScores, getTopPlayers } from "./data/activity";
+import HomeView from "./components/HomeView";
 
 export const metadata: Metadata = {
-  title: "Arcade Vault · Biblioteca",
+  title: "Arcade Vault · Inicio",
 };
 
 export default async function Home() {
-  const games = await getGames();
-  return <LibraryView games={games} />;
+  const [games, recent, top] = await Promise.all([
+    getGames(),
+    getRecentScores(),
+    getTopPlayers(),
+  ]);
+  return <HomeView games={games.slice(0, 6)} recent={recent} top={top} />;
 }

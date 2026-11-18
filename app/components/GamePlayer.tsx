@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Game } from "../data/games";
+import { ENGINES } from "../lib/games/registry";
+import type { GameEngineFactory, GameStats } from "../lib/games/types";
+import GameCanvas, { type GameCanvasHandle } from "./GameCanvas";
 import { useSession } from "./SessionProvider";
 
 type SavedScore = { game: string; score: number; name: string; at: number };
@@ -14,6 +17,12 @@ const POINTS_PER_LEVEL = 2500;
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
   const { user } = useSession();
+  // Si el juego tiene motor real, se usa el canvas; si no, la simulación.
+  const factory = ENGINES[game.id] as GameEngineFactory | undefined;
+  const canvasHandle = useRef<GameCanvasHandle>(null);
+  const [runId, setRunId] = useState(0);
+  const [engineLives, setEngineLives] = useState(LIVES);
+  const [engineLevel, setEngineLevel] = useState(1);
   const [score, setScore] = useState(0);
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
@@ -23,13 +32,58 @@ export default function GamePlayer({ game }: { game: Game }) {
   const [saved, setSaved] = useState(false);
 
   const name = nameDraft ?? user?.name ?? "INVITADO";
-  const level = 1 + Math.floor(score / POINTS_PER_LEVEL);
+  const level = factory
+    ? engineLevel
+    : 1 + Math.floor(score / POINTS_PER_LEVEL);
+  const lives = factory ? engineLives : LIVES;
+
+  const resetStats = () => {
+    setScore(0);
+    setEngineLives(LIVES);
+    setEngineLevel(1);
+  };
 
   const restart = () => {
-    setScore(0);
+    resetStats();
     setPaused(false);
     setOver(false);
     setSaved(false);
+    setRunId((r) => r + 1);
+  };
+
+  // Notificaciones del motor
+  const handleStats = (s: GameStats) => {
+    setScore(s.score);
+    setEngineLives(s.lives);
+    setEngineLevel(s.level);
+  };
+  const handleGameOver = (final: GameStats) => {
+    handleStats(final);
+    setPaused(false);
+    setOver(true);
+  };
+  // Reinicio con Espacio desde el propio juego: cierra el modal y pone el HUD a cero.
+  const handleEngineRestart = () => {
+    resetStats();
+    setPaused(false);
+    setOver(false);
+    setSaved(false);
+  };
+
+  // Los botones sueltan el foco tras pulsarse para que Espacio no los reactive.
+  const togglePause = (e: MouseEvent<HTMLButtonElement>) => {
+    setPaused((p) => !p);
+    e.currentTarget.blur();
+  };
+
+  const finish = (e: MouseEvent<HTMLButtonElement>) => {
+    if (factory) {
+      // end() emite onGameOver, que abre el modal.
+      canvasHandle.current?.end();
+    } else {
+      setOver(true);
+    }
+    e.currentTarget.blur();
   };
 
   const saveScore = () => {
@@ -52,13 +106,13 @@ export default function GamePlayer({ game }: { game: Game }) {
   };
 
   useEffect(() => {
-    if (over || paused) return;
+    if (factory || over || paused) return;
     const t = setInterval(
       () => setScore((s) => s + Math.floor(10 + Math.random() * 90)),
       220,
     );
     return () => clearInterval(t);
-  }, [over, paused]);
+  }, [factory, over, paused]);
 
   return (
     <div className="av-player fade-in">
@@ -76,7 +130,7 @@ export default function GamePlayer({ game }: { game: Game }) {
           </div>
           <div className="hud-stat lives">
             <div className="l">Vidas</div>
-            <div className="v">{"♥ ".repeat(LIVES).trim() || "—"}</div>
+            <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
           </div>
           <div className="hud-stat level">
             <div className="l">Nivel</div>
@@ -84,10 +138,10 @@ export default function GamePlayer({ game }: { game: Game }) {
           </div>
         </div>
         <div className="hud-actions">
-          <button className="btn yellow" onClick={() => setPaused((p) => !p)}>
+          <button className="btn yellow" onClick={togglePause}>
             {paused ? "REANUDAR" : "PAUSA"}
           </button>
-          <button className="btn magenta" onClick={() => setOver(true)}>
+          <button className="btn magenta" onClick={finish}>
             FIN
           </button>
           <Link href={`/games/${game.id}`} className="btn ghost">
@@ -98,14 +152,28 @@ export default function GamePlayer({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          <div className="game-arena">
-            <div className="grid-floor"></div>
-            <div className="enemy e1"></div>
-            <div className="enemy e2"></div>
-            <div className="enemy e3"></div>
-            <div className="player-ship"></div>
-          </div>
-          {paused && (
+          {factory ? (
+            <GameCanvas
+              ref={canvasHandle}
+              factory={factory}
+              paused={paused}
+              runId={runId}
+              onStats={handleStats}
+              onGameOver={handleGameOver}
+              onRestart={handleEngineRestart}
+              onPauseChange={setPaused}
+            />
+          ) : (
+            <div className="game-arena">
+              <div className="grid-floor"></div>
+              <div className="enemy e1"></div>
+              <div className="enemy e2"></div>
+              <div className="enemy e3"></div>
+              <div className="player-ship"></div>
+            </div>
+          )}
+          {/* Con motor, la pausa se dibuja en el propio canvas. */}
+          {paused && !factory && (
             <div
               className="crt-content"
               style={{ background: "rgba(0,0,0,0.6)", zIndex: 5 }}
@@ -134,6 +202,20 @@ export default function GamePlayer({ game }: { game: Game }) {
           <span>{game.title} · CRT-83 · 60 HZ</span>
           <span>CARGA · 1MB</span>
         </div>
+        {factory && (
+          <div
+            className="mono"
+            style={{
+              marginTop: 12,
+              textAlign: "center",
+              fontSize: 11,
+              color: "var(--ink-dim)",
+              letterSpacing: "0.12em",
+            }}
+          >
+            ← → ROTAR · ↑ PROPULSAR · ESPACIO DISPARAR · ↓ ESCUDO · P PAUSA
+          </div>
+        )}
       </div>
 
       {over && (
@@ -162,7 +244,10 @@ export default function GamePlayer({ game }: { game: Game }) {
               <button className="btn" onClick={restart}>
                 JUGAR DE NUEVO
               </button>
-              <button className="btn magenta" onClick={() => router.push("/games")}>
+              <button
+                className="btn magenta"
+                onClick={() => router.push("/games")}
+              >
                 VOLVER AL VAULT
               </button>
             </div>

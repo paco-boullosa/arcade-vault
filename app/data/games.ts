@@ -104,6 +104,17 @@ const GAMES: Game[] = [
     best: 24,
     plays: "4.2K",
   },
+  {
+    id: "asteroids",
+    title: "ASTEROIDES",
+    short: "Esquiva, dispara y parte rocas en un vacío sin bordes.",
+    long: "Rota, propulsa y dispara para partir cada roca en fragmentos más pequeños. Tienes 3 vidas, un escudo temporal por vida y, en cada nivel, un ítem de Disparo Triple que puede aparecer. Cada oleada trae más rocas que la anterior.",
+    cat: "SHOOTER",
+    cover: "cover-asteroids",
+    color: "cyan",
+    best: 0,
+    plays: "0",
+  },
 ];
 
 export async function getGames(): Promise<Game[]> {

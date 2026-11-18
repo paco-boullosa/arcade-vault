@@ -1,6 +1,6 @@
 # SPEC 04 — Infraestructura del cliente Supabase (browser + SSR)
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 03
 > **Date:** 2026-11-18
 > **Objective:** Instalar y configurar el cliente de Supabase para Next.js (navegador, servidor y `proxy.ts` de refresco de sesión) conectado al proyecto remoto, como base para los specs futuros de autenticación, base de datos y realtime.
@@ -93,21 +93,21 @@ Cada paso deja la app arrancando con `npm run dev` y es commiteable por separado
 
 ## Criterios de aceptación
 
-- [ ] `npm run lint` termina sin errores.
-- [ ] `npm run build` termina sin errores.
-- [ ] `npx tsc --noEmit` termina sin errores.
-- [ ] `package.json` incluye `@supabase/supabase-js` y `@supabase/ssr` en `dependencies` y `tsx` en `devDependencies`.
-- [ ] Existen `app/lib/supabase/client.ts`, `app/lib/supabase/server.ts`, `app/lib/supabase/proxy.ts` y `proxy.ts` en la raíz.
-- [ ] `npm run check:supabase` imprime `SUPABASE OK` y termina con código 0.
-- [ ] Con `NEXT_PUBLIC_SUPABASE_URL` vacía, `npm run check:supabase` termina con código 1 y el mensaje nombra la variable que falta.
-- [ ] `/`, `/games`, `/games/<id>`, `/hall-of-fame`, `/about` y `/auth` responden 200 en `npm run dev` y se ven igual que antes.
-- [ ] El inicio de sesión simulado de `/auth` (`av_user` en localStorage) sigue funcionando y el nav muestra el nombre del usuario.
-- [ ] El envío del formulario de contacto de `/about` sigue funcionando.
-- [ ] La consola del navegador no muestra errores ni avisos de React en `/` ni en `/auth`.
-- [ ] `.env.example` está versionado con las dos variables nuevas vacías y `.env.local` sigue ignorado por git.
-- [ ] `git diff` y `.env.example` no contienen la publishable key, la `service_role` key ni `SUPABASE_DB_PASS`.
-- [ ] Una búsqueda de `service_role` en `app/`, `proxy.ts` y `scripts/` no da resultados.
-- [ ] `app/data/*.ts` y `app/components/SessionProvider.tsx` no tienen cambios respecto a la rama anterior.
+- [x] `npm run lint` termina sin errores.
+- [x] `npm run build` termina sin errores.
+- [x] `npx tsc --noEmit` termina sin errores.
+- [x] `package.json` incluye `@supabase/supabase-js` y `@supabase/ssr` en `dependencies` y `tsx` en `devDependencies`.
+- [x] Existen `app/lib/supabase/client.ts`, `app/lib/supabase/server.ts`, `app/lib/supabase/proxy.ts` y `proxy.ts` en la raíz.
+- [x] `npm run check:supabase` imprime `SUPABASE OK` y termina con código 0.
+- [x] Con `NEXT_PUBLIC_SUPABASE_URL` vacía, `npm run check:supabase` termina con código 1 y el mensaje nombra la variable que falta.
+- [x] `/`, `/games`, `/games/<id>`, `/hall-of-fame`, `/about` y `/auth` responden 200 en `npm run dev` y se ven igual que antes.
+- [x] El inicio de sesión simulado de `/auth` (`av_user` en localStorage) sigue funcionando y el nav muestra el nombre del usuario.
+- [x] El envío del formulario de contacto de `/about` sigue funcionando.
+- [x] La consola del navegador no muestra errores ni avisos de React en `/` ni en `/auth`.
+- [x] `.env.example` está versionado con las dos variables nuevas vacías y `.env.local` sigue ignorado por git.
+- [x] `git diff` y `.env.example` no contienen la publishable key, la `service_role` key ni `SUPABASE_DB_PASS`.
+- [x] Una búsqueda de `service_role` en `app/`, `proxy.ts` y `scripts/` no da resultados.
+- [x] `app/data/*.ts` y `app/components/SessionProvider.tsx` no tienen cambios respecto a la rama anterior.
 
 ---
 

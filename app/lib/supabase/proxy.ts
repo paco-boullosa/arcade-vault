@@ -1,0 +1,45 @@
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+
+export async function updateSession(request: NextRequest) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (!url) {
+    throw new Error("Falta la variable de entorno NEXT_PUBLIC_SUPABASE_URL");
+  }
+  if (!key) {
+    throw new Error(
+      "Falta la variable de entorno NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+    );
+  }
+
+  let supabaseResponse = NextResponse.next({ request });
+
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet, headers) {
+        cookiesToSet.forEach(({ name, value }) =>
+          request.cookies.set(name, value),
+        );
+        supabaseResponse = NextResponse.next({ request });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options),
+        );
+        Object.entries(headers).forEach(([name, value]) =>
+          supabaseResponse.headers.set(name, value),
+        );
+      },
+    },
+  });
+
+  // No ejecutar código entre createServerClient y getClaims(): un error aquí
+  // puede cerrar sesiones de usuarios de forma aleatoria y es difícil de depurar.
+  // getClaims() valida el token y refresca la sesión si ha caducado.
+  await supabase.auth.getClaims();
+
+  return supabaseResponse;
+}

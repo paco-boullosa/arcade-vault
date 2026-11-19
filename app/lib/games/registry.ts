@@ -1,3 +1,4 @@
+import { createArkanoidGame } from "../../games/arkanoid/engine";
 import { createAsteroidsGame } from "../../games/asteroids/engine";
 import { createTetrisGame } from "../../games/tetris/engine";
 import type { GameEngineFactory } from "./types";
@@ -28,5 +29,12 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     controls:
       "← → MOVER · ↑ X ROTAR · ↓ BAJAR · ESPACIO CAER · G FANTASMA · S SKIN · P PAUSA",
     initialLives: 1,
+  },
+  arkanoid: {
+    factory: createArkanoidGame,
+    width: 800,
+    height: 600,
+    controls: "← → MOVER · ESPACIO LANZAR · ENTER CONTINUAR · P PAUSA",
+    initialLives: 3,
   },
 };

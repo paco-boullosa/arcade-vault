@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useImperativeHandle, useRef, type Ref } from "react";
-import { H, W } from "../games/asteroids/constants";
 import type {
   GameEngine,
   GameEngineEvents,
@@ -15,6 +14,9 @@ export type GameCanvasHandle = {
 
 type Props = {
   factory: GameEngineFactory;
+  // Resolución interna del canvas; también fija la proporción en pantalla.
+  width: number;
+  height: number;
   paused: boolean;
   // Al cambiar, la partida se reinicia desde cero.
   runId: number;
@@ -27,6 +29,8 @@ type Props = {
 
 export default function GameCanvas({
   factory,
+  width,
+  height,
   paused,
   runId,
   onStats,
@@ -94,12 +98,12 @@ export default function GameCanvas({
   return (
     <canvas
       ref={canvasRef}
-      width={W}
-      height={H}
+      width={width}
+      height={height}
       style={{
         display: "block",
         width: "100%",
-        aspectRatio: "4 / 3",
+        aspectRatio: `${width} / ${height}`,
         background: "#000",
       }}
     />

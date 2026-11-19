@@ -1,6 +1,6 @@
 # SPEC 07 — Juego Tetris integrado con su leaderboard
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06
 > **Date:** 2026-11-19
 > **Objective:** Portar `references/started-games/03-tetris/` a un motor TypeScript con su canvas, modos de juego, power-ups y skins, que notifica a React, y publicarlo como juego nuevo `tetris` con su ranking en Supabase.
@@ -144,57 +144,57 @@ El texto de `short` y `long` debe describir el juego real: piezas, líneas, powe
 
 **Calidad**
 
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
-- [ ] La consola no muestra errores ni avisos de React en `/games/tetris/play`.
-- [ ] A 375 px de ancho no hay scroll horizontal y el canvas no se deforma.
-- [ ] Asteroides conserva su canvas 800×600, su línea de controles y 3 corazones al empezar y al reiniciar.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
+- [x] La consola no muestra errores ni avisos de React en `/games/tetris/play`.
+- [x] A 375 px de ancho no hay scroll horizontal y el canvas no se deforma.
+- [x] Asteroides conserva su canvas 800×600, su línea de controles y 3 corazones al empezar y al reiniciar.
 
 **Catálogo**
 
-- [ ] `/games` muestra 10 tarjetas y la de TETRIS tiene portada propia `.cover-tetris`, distinta de las demás.
-- [ ] `/games/tetris` y `/games/tetris/play` responden 200.
-- [ ] `games` contiene la fila `tetris` (`PUZZLE`, `yellow`, `sort_order` 10) y `list_migrations` lista la migración.
-- [ ] La fila `caida` no cambia y sigue con simulación y sin botón de guardar.
+- [X] `/games` muestra 10 tarjetas y la de TETRIS tiene portada propia `.cover-tetris`, distinta de las demás.
+- [X] `/games/tetris` y `/games/tetris/play` responden 200.
+- [X] `games` contiene la fila `tetris` (`PUZZLE`, `yellow`, `sort_order` 10) y `list_migrations` lista la migración.
+- [X] La fila `caida` no cambia y sigue con simulación y sin botón de guardar.
 
 **Juego**
 
-- [ ] Al cargar aparece el canvas (no `.game-arena`) con el menú de 6 modos: Clásico, Sprint 40, Marea de basura, Bloques fijos, Piezas fantasma y Rotación inversa.
-- [ ] `↑` `↓` mueven la selección y `Enter` o `Espacio` empiezan el modo elegido.
-- [ ] Al empezar Clásico, ambos HUD muestran puntuación 0, un solo `♥` y nivel 01, y el tablero está vacío con 10 columnas y 20 filas.
-- [ ] El primer `Espacio` sobre el tablero vacío suma exactamente 36 puntos (18 celdas × 2), sea cual sea la pieza.
-- [ ] El primer `↓` sobre el tablero vacío suma exactamente 1 punto.
-- [ ] Una línea simple suma 100 × nivel, doble 300 × nivel, triple 500 × nivel y Tetris (4 líneas) 800 × nivel. A nivel 2 un Tetris suma 1600.
-- [ ] El nivel sube a 2 al limpiar 10 líneas, la caída pasa de 1000 ms a 910 ms, y desde el nivel 11 queda fija en 100 ms.
-- [ ] `←` `→` mueven, `↑` y `X` rotan en sentido horario con los kicks `[0, -1, 1, -2, 2]`, y la pieza no atraviesa paredes ni bloques.
-- [ ] `G` muestra y oculta la pieza fantasma, que se mantiene al empezar otra partida.
-- [ ] Al limpiar 5 líneas, la siguiente pieza sale marcada con borde pulsante e icono, y el panel indica `Siguiente: <icono> <nombre>`. A las 10 líneas ocurre lo mismo.
-- [ ] Bomba borra 3×3 alrededor del centro de la pieza, Rayo borra su fila y su columna, Tinte borra los bloques de su color tras 400 ms, Gravedad compacta cada columna y Congelar detiene la caída 5 s sin bloquear el movimiento.
-- [ ] Los power-ups no suman puntos por sí mismos.
-- [ ] Sprint 40 muestra `lines/40` y la cuenta atrás desde 2:00. Con 40 líneas el canvas muestra `¡DESAFÍO SUPERADO!`, y si se agota el tiempo muestra `GAME OVER` con el motivo `Se acabó el tiempo`.
-- [ ] Marea de basura sube una fila gris con un hueco cada 10 s y se supera al sobrevivir 2:00.
-- [ ] Bloques fijos empieza con grises en las 6 filas inferiores (cada fila con un hueco) y se supera al eliminarlos todos.
-- [ ] Piezas fantasma oculta las piezas fijadas, salvo los grises, mientras dura la partida, y se supera con 20 líneas.
-- [ ] Rotación inversa empieza en nivel 5 (HUD con `05`), rota en sentido antihorario desde el nivel 6 y se supera al llegar al nivel 8.
-- [ ] `S` cambia entre Retro, Neon, Pastel y Pixel art al instante, el panel muestra el nombre, y tras recargar se conserva la skin elegida. Con `localStorage` bloqueado el juego sigue funcionando.
-- [ ] Ambos HUD (canvas y HTML) muestran siempre los mismos `score`, `lives` y `level`.
-- [ ] PAUSA congela el juego y el temporizador de los desafíos, y el botón pasa a REANUDAR. La tecla `P` y `Esc` hacen lo mismo. Al reanudar, `elapsed` no salta.
-- [ ] Al terminar (victoria o derrota), el canvas muestra el título, la puntuación y el modal aparece con la misma puntuación, una sola vez.
-- [ ] `Espacio` en GAME OVER reinicia el mismo modo con valores iniciales en ambos HUD y cierra el modal. Si `Espacio` seguía pulsado al morir (`e.repeat`), no reinicia hasta soltarlo y volver a pulsar.
-- [ ] `M` en GAME OVER vuelve al menú, cierra el modal y deja el HUD en 0, un `♥` y nivel 01.
-- [ ] FIN abre el modal con la puntuación actual y JUGAR DE NUEVO reinicia el mismo modo. FIN con el menú abierto no hace nada.
-- [ ] Se puede escribir un nombre con espacios en el modal sin que `Espacio`, `G`, `S` ni `M` actúen en el juego.
-- [ ] Salir y volver, y el doble montaje de StrictMode, no dejan dos bucles ni listeners duplicados: la pieza cae a un ritmo, no al doble.
-- [ ] La línea de controles aparece en `/games/tetris/play` con las teclas de Tetris y no en juegos sin motor.
+- [X] Al cargar aparece el canvas (no `.game-arena`) con el menú de 6 modos: Clásico, Sprint 40, Marea de basura, Bloques fijos, Piezas fantasma y Rotación inversa.
+- [X] `↑` `↓` mueven la selección y `Enter` o `Espacio` empiezan el modo elegido.
+- [X] Al empezar Clásico, ambos HUD muestran puntuación 0, un solo `♥` y nivel 01, y el tablero está vacío con 10 columnas y 20 filas.
+- [X] El primer `Espacio` sobre el tablero vacío suma exactamente 36 puntos (18 celdas × 2), sea cual sea la pieza.
+- [X] El primer `↓` sobre el tablero vacío suma exactamente 1 punto.
+- [X] Una línea simple suma 100 × nivel, doble 300 × nivel, triple 500 × nivel y Tetris (4 líneas) 800 × nivel. A nivel 2 un Tetris suma 1600.
+- [X] El nivel sube a 2 al limpiar 10 líneas, la caída pasa de 1000 ms a 910 ms, y desde el nivel 11 queda fija en 100 ms.
+- [X] `←` `→` mueven, `↑` y `X` rotan en sentido horario con los kicks `[0, -1, 1, -2, 2]`, y la pieza no atraviesa paredes ni bloques.
+- [X] `G` muestra y oculta la pieza fantasma, que se mantiene al empezar otra partida.
+- [X] Al limpiar 5 líneas, la siguiente pieza sale marcada con borde pulsante e icono, y el panel indica `Siguiente: <icono> <nombre>`. A las 10 líneas ocurre lo mismo.
+- [X] Bomba borra 3×3 alrededor del centro de la pieza, Rayo borra su fila y su columna, Tinte borra los bloques de su color tras 400 ms, Gravedad compacta cada columna y Congelar detiene la caída 5 s sin bloquear el movimiento.
+- [X] Los power-ups no suman puntos por sí mismos.
+- [X] Sprint 40 muestra `lines/40` y la cuenta atrás desde 2:00. Con 40 líneas el canvas muestra `¡DESAFÍO SUPERADO!`, y si se agota el tiempo muestra `GAME OVER` con el motivo `Se acabó el tiempo`.
+- [X] Marea de basura sube una fila gris con un hueco cada 10 s y se supera al sobrevivir 2:00.
+- [X] Bloques fijos empieza con grises en las 6 filas inferiores (cada fila con un hueco) y se supera al eliminarlos todos.
+- [X] Piezas fantasma oculta las piezas fijadas, salvo los grises, mientras dura la partida, y se supera con 20 líneas.
+- [X] Rotación inversa empieza en nivel 5 (HUD con `05`), rota en sentido antihorario desde el nivel 6 y se supera al llegar al nivel 8.
+- [X] `S` cambia entre Retro, Neon, Pastel y Pixel art al instante, el panel muestra el nombre, y tras recargar se conserva la skin elegida. Con `localStorage` bloqueado el juego sigue funcionando.
+- [X] Ambos HUD (canvas y HTML) muestran siempre los mismos `score`, `lives` y `level`.
+- [X] PAUSA congela el juego y el temporizador de los desafíos, y el botón pasa a REANUDAR. La tecla `P` y `Esc` hacen lo mismo. Al reanudar, `elapsed` no salta.
+- [X] Al terminar (victoria o derrota), el canvas muestra el título, la puntuación y el modal aparece con la misma puntuación, una sola vez.
+- [X] `Espacio` en GAME OVER reinicia el mismo modo con valores iniciales en ambos HUD y cierra el modal. Si `Espacio` seguía pulsado al morir (`e.repeat`), no reinicia hasta soltarlo y volver a pulsar.
+- [X] `M` en GAME OVER vuelve al menú, cierra el modal y deja el HUD en 0, un `♥` y nivel 01.
+- [X] FIN abre el modal con la puntuación actual y JUGAR DE NUEVO reinicia el mismo modo. FIN con el menú abierto no hace nada.
+- [X] Se puede escribir un nombre con espacios en el modal sin que `Espacio`, `G`, `S` ni `M` actúen en el juego.
+- [X] Salir y volver, y el doble montaje de StrictMode, no dejan dos bucles ni listeners duplicados: la pieza cae a un ritmo, no al doble.
+- [X] La línea de controles aparece en `/games/tetris/play` con las teclas de Tetris y no en juegos sin motor.
 
 **Leaderboard**
 
-- [ ] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'tetris'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
-- [ ] Tras guardar, `/games/tetris` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
-- [ ] Un desafío superado también guarda con la misma puntuación de la partida, sin bonus.
-- [ ] Una puntuación por encima de 9.999.999 se limita a 9.999.999 y no viola el `CHECK`.
-- [ ] Los juegos sin motor siguen con simulación y sin botón de guardar.
-- [ ] Tras las pruebas, `scores` no contiene filas de prueba.
-- [ ] Una búsqueda de `service_role` en `app/` no da resultados.
+- [X] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'tetris'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
+- [X] Tras guardar, `/games/tetris` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
+- [X] Un desafío superado también guarda con la misma puntuación de la partida, sin bonus.
+- [X] Una puntuación por encima de 9.999.999 se limita a 9.999.999 y no viola el `CHECK`.
+- [X] Los juegos sin motor siguen con simulación y sin botón de guardar.
+- [X] Tras las pruebas, `scores` no contiene filas de prueba.
+- [X] Una búsqueda de `service_role` en `app/` no da resultados.
 
 ---
 

@@ -1051,6 +1051,55 @@ a {
     linear-gradient(#9aa3b5, #9aa3b5) 0 100% / 100% 14.2857% no-repeat;
 }
 
+/* SNAKE (id `snake`): serpiente amarilla enroscada con la cabeza mirando a una
+   fruta del juego. La fruta (::before) recorta el tomate real de fruits.png;
+   la serpiente (::after) son tres barras y la cabeza, con su propio resplandor.
+   Distinta de .cover-snake (verde, `serpentina`). */
+.cover-snake-fruit {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(245, 255, 0, 0.06) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 255, 0, 0.06) 0 1px,
+      transparent 1px 24px
+    ),
+    radial-gradient(ellipse 60% 70% at 55% 55%, #2b2600, transparent 75%),
+    #08080f;
+}
+.cover-snake-fruit::before {
+  content: "";
+  position: absolute;
+  left: 7%;
+  top: 50%;
+  width: 14%;
+  aspect-ratio: 150 / 160;
+  transform: translateY(-50%);
+  background: url("/games/snake/fruits.png") 94.89% 48.23% / 2526.67% auto
+    no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 8px rgba(255, 59, 30, 0.55));
+}
+.cover-snake-fruit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* ojos */
+    radial-gradient(circle at 28.5% 46.5%, #08080f 0 2px, transparent 2.5px),
+    radial-gradient(circle at 28.5% 53.5%, #08080f 0 2px, transparent 2.5px),
+    /* cabeza */ linear-gradient(#fffdb0, #fffdb0) 27.907% 50% / 14% 16%
+      no-repeat,
+    /* cuerpo: barra superior, tramo vertical y barra inferior */
+    linear-gradient(#f5ff00, #f5ff00) 50% 50% / 52% 12% no-repeat,
+    linear-gradient(#f5ff00, #f5ff00) 72.727% 73.333% / 12% 40% no-repeat,
+    linear-gradient(#f5ff00, #f5ff00) 33.333% 81.818% / 64% 12% no-repeat;
+  filter: drop-shadow(0 0 8px rgba(245, 255, 0, 0.55));
+}
+
 .cover-rana {
   background: linear-gradient(180deg, #001f2a, #0a0a18);
 }

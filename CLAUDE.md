@@ -29,6 +29,11 @@ Env vars: see `.env.example` (`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FRO
 - PostToolUse hook (`.claude/hooks/format-and-lint.sh`): runs Prettier and `eslint --fix` on every file written or edited (skips `node_modules`, `.next`, `references`). An ESLint error blocks the edit, so fix it rather than ignore it.
 - `.mcp.json` configures the Supabase MCP server for this project (migrations, SQL, type generation, advisors).
 
+## Agents
+
+- `game-planner` agent (`.claude/agents/game-planner.md`): decides which game fits the platform before `/nuevo-juego`. Logs every proposal (including other people's suggestions) in `references/game-planner-todo.md` and keeps project memory in `.claude/agent-memory/game-planner/`. It never writes code or specs.
+
+
 ## Architecture
 
 - Routes (`app/`): `/` Home, `/games` library, `/games/[id]` detail + top 10, `/games/[id]/play` player, `/hall-of-fame`, `/about` (contact form via Resend server action in `app/about/actions.ts`), `/auth`.

@@ -213,15 +213,31 @@ export default function HomeView({ games, recent, top }: Props) {
               <div className="ac-title pixel">▸ ÚLTIMAS PUNTUACIONES</div>
             </div>
             <div className="ticker">
+              {recent.length === 0 && (
+                <p
+                  className="pixel"
+                  style={{
+                    fontSize: 10,
+                    textAlign: "center",
+                    padding: "24px 16px",
+                    letterSpacing: "0.1em",
+                    color: "var(--ink-faint)",
+                  }}
+                >
+                  AÚN NO HAY PUNTUACIONES
+                </p>
+              )}
               {recent.map((r, i) => (
                 <div
-                  key={r.player}
+                  key={i}
                   className="tick-row"
                   style={{ animationDelay: i * 60 + "ms" }}
                 >
                   <span className={"tk-p neon-" + r.color}>{r.player}</span>
                   <span className="tk-mid">▸ {r.game}</span>
-                  <span className="tk-s">+{r.score.toLocaleString("es-ES")}</span>
+                  <span className="tk-s">
+                    +{r.score.toLocaleString("es-ES")}
+                  </span>
                   <span className="tk-t">{r.ago}</span>
                 </div>
               ))}
@@ -238,6 +254,20 @@ export default function HomeView({ games, recent, top }: Props) {
               </Link>
             </div>
             <div className="top-list">
+              {top.length === 0 && (
+                <p
+                  className="pixel"
+                  style={{
+                    fontSize: 10,
+                    textAlign: "center",
+                    padding: "24px 16px",
+                    letterSpacing: "0.1em",
+                    color: "var(--ink-faint)",
+                  }}
+                >
+                  AÚN NO HAY PUNTUACIONES
+                </p>
+              )}
               {top.map((r, i) => (
                 <div
                   key={r.player}
@@ -252,7 +282,9 @@ export default function HomeView({ games, recent, top }: Props) {
                           : "")
                   }
                 >
-                  <span className="tp-rk">#{String(r.rank).padStart(2, "0")}</span>
+                  <span className="tp-rk">
+                    #{String(r.rank).padStart(2, "0")}
+                  </span>
                   <span className="tp-bar">
                     <span
                       className="tp-fill"
@@ -260,7 +292,9 @@ export default function HomeView({ games, recent, top }: Props) {
                     ></span>
                   </span>
                   <span className="tp-p">{r.player}</span>
-                  <span className="tp-s">{r.score.toLocaleString("es-ES")}</span>
+                  <span className="tp-s">
+                    {r.score.toLocaleString("es-ES")}
+                  </span>
                 </div>
               ))}
             </div>

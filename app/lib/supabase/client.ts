@@ -1,4 +1,5 @@
 import { createBrowserClient } from "@supabase/ssr";
+import type { Database } from "./database.types";
 
 export function createClient() {
   // Next.js solo inlinea NEXT_PUBLIC_* si se referencian de forma literal,
@@ -15,5 +16,5 @@ export function createClient() {
     );
   }
 
-  return createBrowserClient(url, key);
+  return createBrowserClient<Database>(url, key);
 }

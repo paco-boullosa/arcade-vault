@@ -20,11 +20,7 @@ export async function generateMetadata({
   };
 }
 
-async function GameDetail({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+async function GameDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const game = await getGame(id);
   if (!game) notFound();
@@ -89,6 +85,19 @@ async function GameDetail({
       <aside>
         <div className="leaderboard">
           <h3>MEJORES PUNTUACIONES</h3>
+          {scores.length === 0 && (
+            <p
+              style={{
+                padding: "24px 16px",
+                textAlign: "center",
+                fontSize: 12,
+                letterSpacing: "0.1em",
+                color: "var(--ink-faint)",
+              }}
+            >
+              AÚN NO HAY PUNTUACIONES
+            </p>
+          )}
           {scores.map((r, i) => (
             <div
               key={r.name}

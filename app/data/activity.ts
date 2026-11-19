@@ -1,3 +1,6 @@
+import { createClient } from "../lib/supabase/public";
+import { timeAgo } from "../lib/format";
+
 export type NeonColor = "cyan" | "magenta" | "yellow" | "green";
 
 export type RecentScore = {
@@ -10,28 +13,46 @@ export type RecentScore = {
 
 export type TopPlayer = { rank: number; player: string; score: number };
 
-const RECENT_SCORES: RecentScore[] = [
-  { player: "NEONFOX", game: "Caída", score: 184220, ago: "hace 2 min", color: "magenta" },
-  { player: "PX_KAI", game: "Glotón", score: 96400, ago: "hace 5 min", color: "yellow" },
-  { player: "Z3R0COOL", game: "Invasores", score: 54190, ago: "hace 8 min", color: "green" },
-  { player: "VAULT_07", game: "Rocas", score: 41200, ago: "hace 12 min", color: "cyan" },
-  { player: "GLITCHA", game: "Bloque Buster", score: 28450, ago: "hace 18 min", color: "cyan" },
-  { player: "ARKADYA", game: "Serpentina", score: 7820, ago: "hace 24 min", color: "green" },
-  { player: "CYBER_LU", game: "Ranaria", score: 18900, ago: "hace 31 min", color: "yellow" },
-];
-
-const TOP_PLAYERS: TopPlayer[] = [
-  { rank: 1, player: "NEONFOX", score: 312840 },
-  { rank: 2, player: "PX_KAI", score: 248110 },
-  { rank: 3, player: "M00NRYU", score: 196720 },
-  { rank: 4, player: "VAULT_07", score: 154300 },
-  { rank: 5, player: "GLITCHA", score: 138900 },
-];
-
+// Últimas 7 puntuaciones guardadas (todas las partidas, no solo la mejor de
+// cada jugador), la más reciente primero.
 export async function getRecentScores(): Promise<RecentScore[]> {
-  return RECENT_SCORES;
+  const { data, error } = await createClient()
+    .from("scores")
+    .select("player_name, score, created_at, games(title, color)")
+    .order("created_at", { ascending: false })
+    .limit(7);
+
+  if (error) {
+    throw new Error(`No se pudo cargar la actividad: ${error.message}`);
+  }
+
+  // `games` es una relación muchos-a-uno obligatoria (clave foránea not null).
+  return data.map((r) => ({
+    player: r.player_name,
+    game: r.games!.title,
+    score: r.score,
+    ago: timeAgo(r.created_at),
+    color: r.games!.color as NeonColor,
+  }));
 }
 
+// Top 5: mejor puntuación individual de cada nombre en cualquier juego.
 export async function getTopPlayers(): Promise<TopPlayer[]> {
-  return TOP_PLAYERS;
+  const { data, error } = await createClient()
+    .from("top_players")
+    .select("player_name, score")
+    .order("score", { ascending: false })
+    .order("player_name", { ascending: true })
+    .limit(5);
+
+  if (error) {
+    throw new Error(`No se pudo cargar el top de jugadores: ${error.message}`);
+  }
+
+  // Las vistas no declaran nulabilidad: se estrechan aquí.
+  return data.map((r, i) => ({
+    rank: i + 1,
+    player: r.player_name!,
+    score: r.score!,
+  }));
 }

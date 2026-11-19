@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getGames } from "../data/games";
 import { getScores } from "../data/scores";
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   title: "Arcade Vault · Salón de la Fama",
 };
 
-export default async function HallOfFamePage() {
+async function HallOfFameContent() {
   const games = await getGames();
   const entries = await Promise.all(
     games.map(async (game) => ({
@@ -16,4 +17,12 @@ export default async function HallOfFamePage() {
     })),
   );
   return <HallOfFameView entries={entries} />;
+}
+
+export default function HallOfFamePage() {
+  return (
+    <Suspense fallback={<p>CARGANDO…</p>}>
+      <HallOfFameContent />
+    </Suspense>
+  );
 }

@@ -1,6 +1,6 @@
 # SPEC 08 — Juego Arkanoid integrado con su leaderboard
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06, SPEC 07
 > **Date:** 2026-11-19
 > **Objective:** Portar `references/started-games/04-arkanoid/` a un motor TypeScript con su canvas, sprites, sonido y controles de teclado, que notifica a React, y publicarlo como juego nuevo `arkanoid` con su ranking en Supabase.
@@ -159,51 +159,51 @@ El texto de `short` y `long` debe describir el juego real: pala, bola, bloques d
 
 **Calidad**
 
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
-- [ ] La consola no muestra errores ni avisos de React en `/games/arkanoid/play`.
-- [ ] A 375 px de ancho no hay scroll horizontal y el canvas no se deforma.
-- [ ] Asteroides y Tetris conservan su canvas, su línea de controles y sus vidas iniciales (3 y 1).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
+- [x] La consola no muestra errores ni avisos de React en `/games/arkanoid/play`.
+- [x] A 375 px de ancho no hay scroll horizontal y el canvas no se deforma.
+- [x] Asteroides y Tetris conservan su canvas, su línea de controles y sus vidas iniciales (3 y 1).
 
 **Catálogo**
 
-- [ ] `/games` muestra 11 tarjetas y la de ARKANOID tiene portada propia `.cover-arkanoid`, distinta de `.cover-bricks` y de las demás.
-- [ ] `/games/arkanoid` y `/games/arkanoid/play` responden 200.
-- [ ] `games` contiene la fila `arkanoid` (`ARCADE`, `magenta`, `sort_order` 11) y `list_migrations` lista la migración.
-- [ ] La fila `bloque-buster` no cambia y sigue con simulación y sin botón de guardar.
+- [x] `/games` muestra 11 tarjetas y la de ARKANOID tiene portada propia `.cover-arkanoid`, distinta de `.cover-bricks` y de las demás.
+- [x] `/games/arkanoid` y `/games/arkanoid/play` responden 200.
+- [x] `games` contiene la fila `arkanoid` (`ARCADE`, `magenta`, `sort_order` 11) y `list_migrations` lista la migración.
+- [x] La fila `bloque-buster` no cambia y sigue con simulación y sin botón de guardar.
 
 **Juego**
 
-- [ ] Al cargar aparece el canvas (no `.game-arena`) con 70 bloques en 7 filas de 10 columnas (rojo, amarillo, cian, magenta, rosa, verde y gris), la pala centrada en `x = 340` y la bola pegada a ella.
-- [ ] Ambos HUD (canvas y HTML) muestran puntuación 0, tres `♥` y nivel 01 al empezar.
-- [ ] `←` y `→` mueven la pala a 480 px/s y no la sacan del canvas (`0 ≤ x ≤ 680`).
-- [ ] Con la bola pegada, la pala la arrastra. `Espacio` la lanza a 45° hacia arriba y a la derecha, a 320 px/s en el nivel 1.
-- [ ] Romper un bloque normal suma exactamente 10 en ambos HUD, con explosión de 4 frames en 150 ms y sonido de rotura.
-- [ ] En el nivel 1 un bloque gris se rompe de un golpe y suma 10.
-- [ ] En los niveles 2 a 5 un bloque gris resiste el primer golpe (rebota con sonido de rebote, sin puntos ni explosión) y al segundo suma exactamente 20.
-- [ ] La bola rebota en paredes, techo y pala con sonido de rebote, e invierte solo el eje de menor penetración contra un bloque. Nunca rompe dos bloques en el mismo frame.
-- [ ] La pala solo rebota la bola cuando esta baja.
-- [ ] Dejar caer la bola resta una vida en ambos HUD y devuelve la bola a la pala. Con la tercera caída seguida en el nivel 1 aparece `Game over`.
-- [ ] Al romper el último bloque, el canvas espera a que terminen las explosiones y muestra `Nivel N completado` con `Pulsa Enter o Espacio para continuar`. Las vidas suben en 1 (máximo 5) en ambos HUD.
-- [ ] `Enter` o `Espacio` en `levelclear` cargan el nivel siguiente, con su máscara y su velocidad (350, 380, 410 y 440 px/s) y el nivel sube en ambos HUD.
-- [ ] Al completar el nivel 5, el canvas muestra `Has ganado` y el modal aparece con la misma puntuación, conservando las vidas restantes.
-- [ ] Ambos HUD muestran siempre los mismos `score`, `lives` y `level`.
-- [ ] PAUSA congela el juego (bola, explosiones y pala), el canvas muestra `PAUSA` y el botón pasa a REANUDAR. La tecla `P` hace lo mismo y emite el cambio de estado a React.
-- [ ] Al terminar (derrota o victoria), el canvas muestra el título y el modal aparece con la misma puntuación, una sola vez.
-- [ ] `Enter` o `Espacio` en `Game over` o `Has ganado` reinicia con puntuación 0, tres `♥` y nivel 01 en ambos HUD, y cierra el modal. Si la tecla seguía pulsada (`e.repeat`), no reinicia hasta soltarla y volver a pulsar.
-- [ ] FIN abre el modal con la puntuación actual y JUGAR DE NUEVO reinicia.
-- [ ] Se puede escribir un nombre con espacios en el modal sin que `Espacio` lance la bola ni `P` pause el juego.
-- [ ] Salir y volver, y el doble montaje de StrictMode, no dejan dos bucles ni listeners duplicados: la bola se mueve a su velocidad, no al doble.
-- [ ] Si el navegador bloquea el audio, el juego sigue funcionando sin errores en consola.
-- [ ] La línea de controles aparece en `/games/arkanoid/play` con las teclas de Arkanoid y no en juegos sin motor.
+- [x] Al cargar aparece el canvas (no `.game-arena`) con 70 bloques en 7 filas de 10 columnas (rojo, amarillo, cian, magenta, rosa, verde y gris), la pala centrada en `x = 340` y la bola pegada a ella.
+- [x] Ambos HUD (canvas y HTML) muestran puntuación 0, tres `♥` y nivel 01 al empezar.
+- [x] `←` y `→` mueven la pala a 480 px/s y no la sacan del canvas (`0 ≤ x ≤ 680`).
+- [x] Con la bola pegada, la pala la arrastra. `Espacio` la lanza a 45° hacia arriba y a la derecha, a 320 px/s en el nivel 1.
+- [x] Romper un bloque normal suma exactamente 10 en ambos HUD, con explosión de 4 frames en 150 ms y sonido de rotura.
+- [x] En el nivel 1 un bloque gris se rompe de un golpe y suma 10.
+- [x] En los niveles 2 a 5 un bloque gris resiste el primer golpe (rebota con sonido de rebote, sin puntos ni explosión) y al segundo suma exactamente 20.
+- [x] La bola rebota en paredes, techo y pala con sonido de rebote, e invierte solo el eje de menor penetración contra un bloque. Nunca rompe dos bloques en el mismo frame.
+- [s] La pala solo rebota la bola cuando esta baja.
+- [s] Dejar caer la bola resta una vida en ambos HUD y devuelve la bola a la pala. Con la tercera caída seguida en el nivel 1 aparece `Game over`.
+- [s] Al romper el último bloque, el canvas espera a que terminen las explosiones y muestra `Nivel N completado` con `Pulsa Enter o Espacio para continuar`. Las vidas suben en 1 (máximo 5) en ambos HUD.
+- [s] `Enter` o `Espacio` en `levelclear` cargan el nivel siguiente, con su máscara y su velocidad (350, 380, 410 y 440 px/s) y el nivel sube en ambos HUD.
+- [s] Al completar el nivel 5, el canvas muestra `Has ganado` y el modal aparece con la misma puntuación, conservando las vidas restantes.
+- [s] Ambos HUD muestran siempre los mismos `score`, `lives` y `level`.
+- [s] PAUSA congela el juego (bola, explosiones y pala), el canvas muestra `PAUSA` y el botón pasa a REANUDAR. La tecla `P` hace lo mismo y emite el cambio de estado a React.
+- [s] Al terminar (derrota o victoria), el canvas muestra el título y el modal aparece con la misma puntuación, una sola vez.
+- [s] `Enter` o `Espacio` en `Game over` o `Has ganado` reinicia con puntuación 0, tres `♥` y nivel 01 en ambos HUD, y cierra el modal. Si la tecla seguía pulsada (`e.repeat`), no reinicia hasta soltarla y volver a pulsar.
+- [x] FIN abre el modal con la puntuación actual y JUGAR DE NUEVO reinicia.
+- [x] Se puede escribir un nombre con espacios en el modal sin que `Espacio` lance la bola ni `P` pause el juego.
+- [x] Salir y volver, y el doble montaje de StrictMode, no dejan dos bucles ni listeners duplicados: la bola se mueve a su velocidad, no al doble.
+- [x] Si el navegador bloquea el audio, el juego sigue funcionando sin errores en consola.
+- [x] La línea de controles aparece en `/games/arkanoid/play` con las teclas de Arkanoid y no en juegos sin motor.
 
 **Leaderboard**
 
-- [ ] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'arkanoid'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
-- [ ] Tras guardar, `/games/arkanoid` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
-- [ ] Una partida ganada también guarda con la puntuación de la partida, sin bonus.
-- [ ] Los juegos sin motor siguen con simulación y sin botón de guardar.
-- [ ] Tras las pruebas, `scores` no contiene filas de prueba.
-- [ ] Una búsqueda de `service_role` en `app/` no da resultados.
+- [x] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'arkanoid'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
+- [x] Tras guardar, `/games/arkanoid` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
+- [x] Una partida ganada también guarda con la puntuación de la partida, sin bonus.
+- [x] Los juegos sin motor siguen con simulación y sin botón de guardar.
+- [x] Tras las pruebas, `scores` no contiene filas de prueba.
+- [x] Una búsqueda de `service_role` en `app/` no da resultados.
 
 ---
 

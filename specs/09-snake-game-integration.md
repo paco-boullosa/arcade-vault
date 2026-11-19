@@ -1,6 +1,6 @@
 # SPEC 09 — Juego Snake integrado con su leaderboard
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06, SPEC 07, SPEC 08
 > **Date:** 2026-11-19
 > **Objective:** Crear el juego Snake desde cero como motor TypeScript con su canvas, frutas pixel-art y controles de teclado, que notifica a React, y publicarlo como juego nuevo `snake` con su ranking en Supabase.
@@ -177,46 +177,46 @@ El texto de `short` y `long` debe describir el juego real: serpiente que crece a
 
 **Calidad**
 
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
-- [ ] La consola no muestra errores ni avisos de React en `/games/snake/play`.
-- [ ] A 375 px de ancho no hay scroll horizontal y el canvas no se deforma.
-- [ ] Asteroides, Tetris y Arkanoid conservan su canvas, su línea de controles y sus vidas iniciales (3, 1 y 3).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
+- [x] La consola no muestra errores ni avisos de React en `/games/snake/play`.
+- [x] A 375 px de ancho no hay scroll horizontal y el canvas no se deforma.
+- [x] Asteroides, Tetris y Arkanoid conservan su canvas, su línea de controles y sus vidas iniciales (3, 1 y 3).
 
 **Catálogo**
 
-- [ ] `/games` muestra 12 tarjetas y la de SNAKE tiene portada propia `.cover-snake-fruit`, distinta de `.cover-snake` (la de `serpentina`) y de las demás.
-- [ ] `/games/snake` y `/games/snake/play` responden 200.
-- [ ] `games` contiene la fila `snake` (`ARCADE`, `yellow`, `sort_order` 12) y `list_migrations` lista la migración.
-- [ ] La fila `serpentina` no cambia y sigue con simulación y sin botón de guardar.
+- [x] `/games` muestra 12 tarjetas y la de SNAKE tiene portada propia `.cover-snake-fruit`, distinta de `.cover-snake` (la de `serpentina`) y de las demás.
+- [x] `/games/snake` y `/games/snake/play` responden 200.
+- [x] `games` contiene la fila `snake` (`ARCADE`, `yellow`, `sort_order` 12) y `list_migrations` lista la migración.
+- [x] La fila `serpentina` no cambia y sigue con simulación y sin botón de guardar.
 
 **Juego**
 
-- [ ] Al cargar aparece el canvas (no `.game-arena`) de 20×15 celdas con una serpiente de 3 celdas con la cabeza en `(5,7)`, una fruta con sprite y el texto `Pulsa una flecha para empezar`. La serpiente no se mueve hasta pulsar una tecla.
-- [ ] Ambos HUD (canvas y HTML) muestran puntuación 0, un `♥` y nivel 01 al empezar.
-- [ ] Las flechas y `WASD` giran la serpiente. En `ready`, `←` no la arranca.
-- [ ] Comer una fruta suma exactamente 10 en ambos HUD y alarga la serpiente en una celda.
-- [ ] La fruta nueva nunca aparece sobre la serpiente y su sprite es distinto del anterior.
-- [ ] Pulsar el sentido contrario al de la marcha no hace nada. Dos giros rápidos seguidos (p. ej. `↑` y `←` yendo a la derecha) no provocan una muerte instantánea.
-- [ ] Al comer 5 frutas el nivel pasa a 02 en ambos HUD y el paso baja de 140 a 132 ms. Con 50 frutas (nivel 11) el paso es 60 ms y no baja más.
-- [ ] Chocar con una pared o con el propio cuerpo termina la partida: el canvas muestra `Game over` con la puntuación y el HUD pasa a 0 `♥`.
-- [ ] Moverse a la celda que libera la cola en ese paso no mata.
-- [ ] Llenar las 300 celdas muestra `Has ganado` y abre el modal con la misma puntuación.
-- [ ] Ambos HUD muestran siempre los mismos `score`, `lives` y `level`.
-- [ ] PAUSA congela la serpiente, el canvas muestra `PAUSA` y el botón pasa a REANUDAR. La tecla `P` hace lo mismo y emite el cambio de estado a React. Al reanudar no hay salto de movimiento.
-- [ ] Al terminar (derrota o victoria), el canvas muestra el título y el modal aparece con la misma puntuación, una sola vez.
-- [ ] `Espacio` en `Game over` o `Has ganado` reinicia con puntuación 0, un `♥` y nivel 01 en ambos HUD, y cierra el modal. Si la tecla seguía pulsada (`e.repeat`), no reinicia hasta soltarla y volver a pulsar.
-- [ ] FIN abre el modal con la puntuación actual y JUGAR DE NUEVO reinicia.
-- [ ] Se puede escribir un nombre con espacios en el modal sin que `Espacio` arranque o reinicie el juego ni `P` lo pause.
-- [ ] Salir y volver, y el doble montaje de StrictMode, no dejan dos bucles ni listeners duplicados: la serpiente avanza a 140 ms por paso, no a 70.
-- [ ] La línea de controles aparece en `/games/snake/play` con las teclas de Snake y no en juegos sin motor.
+- [x] Al cargar aparece el canvas (no `.game-arena`) de 20×15 celdas con una serpiente de 3 celdas con la cabeza en `(5,7)`, una fruta con sprite y el texto `Pulsa una flecha para empezar`. La serpiente no se mueve hasta pulsar una tecla.
+- [x] Ambos HUD (canvas y HTML) muestran puntuación 0, un `♥` y nivel 01 al empezar.
+- [x] Las flechas y `WASD` giran la serpiente. En `ready`, `←` no la arranca.
+- [x] Comer una fruta suma exactamente 10 en ambos HUD y alarga la serpiente en una celda.
+- [x] La fruta nueva nunca aparece sobre la serpiente y su sprite es distinto del anterior.
+- [x] Pulsar el sentido contrario al de la marcha no hace nada. Dos giros rápidos seguidos (p. ej. `↑` y `←` yendo a la derecha) no provocan una muerte instantánea.
+- [x] Al comer 5 frutas el nivel pasa a 02 en ambos HUD y el paso baja de 140 a 132 ms. Con 50 frutas (nivel 11) el paso es 60 ms y no baja más.
+- [x] Chocar con una pared o con el propio cuerpo termina la partida: el canvas muestra `Game over` con la puntuación y el HUD pasa a 0 `♥`.
+- [x] Moverse a la celda que libera la cola en ese paso no mata.
+- [x] Llenar las 300 celdas muestra `Has ganado` y abre el modal con la misma puntuación.
+- [x] Ambos HUD muestran siempre los mismos `score`, `lives` y `level`.
+- [x] PAUSA congela la serpiente, el canvas muestra `PAUSA` y el botón pasa a REANUDAR. La tecla `P` hace lo mismo y emite el cambio de estado a React. Al reanudar no hay salto de movimiento.
+- [x] Al terminar (derrota o victoria), el canvas muestra el título y el modal aparece con la misma puntuación, una sola vez.
+- [x] `Espacio` en `Game over` o `Has ganado` reinicia con puntuación 0, un `♥` y nivel 01 en ambos HUD, y cierra el modal. Si la tecla seguía pulsada (`e.repeat`), no reinicia hasta soltarla y volver a pulsar.
+- [x] FIN abre el modal con la puntuación actual y JUGAR DE NUEVO reinicia.
+- [x] Se puede escribir un nombre con espacios en el modal sin que `Espacio` arranque o reinicie el juego ni `P` lo pause.
+- [x] Salir y volver, y el doble montaje de StrictMode, no dejan dos bucles ni listeners duplicados: la serpiente avanza a 140 ms por paso, no a 70.
+- [x] La línea de controles aparece en `/games/snake/play` con las teclas de Snake y no en juegos sin motor.
 
 **Leaderboard**
 
-- [ ] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'snake'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
-- [ ] Tras guardar, `/games/snake` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
-- [ ] Los juegos sin motor siguen con simulación y sin botón de guardar.
-- [ ] Tras las pruebas, `scores` no contiene filas de prueba.
-- [ ] Una búsqueda de `service_role` en `app/` no da resultados.
+- [x] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'snake'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
+- [x] Tras guardar, `/games/snake` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
+- [x] Los juegos sin motor siguen con simulación y sin botón de guardar.
+- [x] Tras las pruebas, `scores` no contiene filas de prueba.
+- [x] Una búsqueda de `service_role` en `app/` no da resultados.
 
 ---
 

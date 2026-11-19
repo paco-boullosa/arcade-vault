@@ -1,5 +1,6 @@
 import { createArkanoidGame } from "../../games/arkanoid/engine";
 import { createAsteroidsGame } from "../../games/asteroids/engine";
+import { createSnakeGame } from "../../games/snake/engine";
 import { createTetrisGame } from "../../games/tetris/engine";
 import type { GameEngineFactory } from "./types";
 
@@ -36,5 +37,12 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     height: 600,
     controls: "← → MOVER · ESPACIO LANZAR · ENTER CONTINUAR · P PAUSA",
     initialLives: 3,
+  },
+  snake: {
+    factory: createSnakeGame,
+    width: 800,
+    height: 600,
+    controls: "← ↑ → ↓ / WASD MOVER · ESPACIO EMPEZAR/REINICIAR · P PAUSA",
+    initialLives: 1,
   },
 };

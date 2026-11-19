@@ -1,6 +1,6 @@
 # SPEC 06 — Tabla de juegos y leaderboard en Supabase
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 02, SPEC 04, SPEC 05
 > **Date:** 2026-11-19
 > **Objective:** Crear las tablas `games` y `scores` en Supabase y sustituir los datos ficticios del catálogo, el detalle de juego, el Salón de la Fama y la actividad de la Home por datos reales, guardando desde `GamePlayer` las puntuaciones de los juegos con motor.
@@ -168,58 +168,58 @@ Cada paso deja la app arrancando con `npm run dev` y es commiteable por separado
 
 **Base de datos**
 
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
-- [ ] Existe `supabase/migrations/<timestamp>_games_and_scores.sql` y `mcp__supabase__list_migrations` lo lista como aplicado.
-- [ ] `list_tables` muestra `games` y `scores` con RLS activada.
-- [ ] `games` contiene exactamente 9 filas con los ids actuales (`bloque-buster`, `caida`, `serpentina`, `gloton`, `invasores`, `rocas`, `ranaria`, `duelo-pixel`, `asteroids`) y `sort_order` del 1 al 9 en ese orden.
-- [ ] Como `anon`, `select` sobre `games`, `scores` y las tres vistas funciona.
-- [ ] Como `anon`, `insert`, `update` y `delete` sobre `games` fallan, y `update` y `delete` sobre `scores` fallan.
-- [ ] Como `anon`, un `insert` válido en `scores` funciona, y cada uno de estos falla: nombre vacío, nombre de 17 caracteres, nombre con espacios en los extremos, `score` de -1, `score` de 10.000.000 y `game_id` inexistente.
-- [ ] `get_advisors` (seguridad) no reporta errores sobre `games`, `scores` ni las vistas.
-- [ ] Tras las pruebas, `scores` no contiene filas de prueba.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
+- [x] Existe `supabase/migrations/<timestamp>_games_and_scores.sql` y `mcp__supabase__list_migrations` lo lista como aplicado.
+- [x] `list_tables` muestra `games` y `scores` con RLS activada.
+- [x] `games` contiene exactamente 9 filas con los ids actuales (`bloque-buster`, `caida`, `serpentina`, `gloton`, `invasores`, `rocas`, `ranaria`, `duelo-pixel`, `asteroids`) y `sort_order` del 1 al 9 en ese orden.
+- [x] Como `anon`, `select` sobre `games`, `scores` y las tres vistas funciona.
+- [x] Como `anon`, `insert`, `update` y `delete` sobre `games` fallan, y `update` y `delete` sobre `scores` fallan.
+- [x] Como `anon`, un `insert` válido en `scores` funciona, y cada uno de estos falla: nombre vacío, nombre de 17 caracteres, nombre con espacios en los extremos, `score` de -1, `score` de 10.000.000 y `game_id` inexistente.
+- [x] `get_advisors` (seguridad) no reporta errores sobre `games`, `scores` ni las vistas.
+- [x] Tras las pruebas, `scores` no contiene filas de prueba.
 
 **Catálogo y detalle**
 
-- [ ] Con `scores` vacía, `/games` muestra 9 tarjetas, todas con mejor marca `0` y `0` partidas, en el orden de `sort_order`.
-- [ ] `/` muestra como mini-tarjetas los 6 primeros juegos de `sort_order`.
-- [ ] `/games/<id>` carga para los 9 juegos y muestra `AÚN NO HAY PUNTUACIONES` cuando el juego no tiene filas.
-- [ ] Tras guardar una puntuación de Asteroides, `/games/asteroids` la muestra en `#01` con nombre, puntuación y fecha `DD/MM/YYYY`, `Partidas` vale `1` y `Mejor global` vale esa puntuación.
-- [ ] Tras guardar una segunda puntuación menor con el mismo nombre, el ranking sigue mostrando una sola fila para ese nombre con la mejor marca y `Partidas` vale `2`.
-- [ ] La tarjeta ASTEROIDES de `/games` muestra la mejor marca real.
+- [x] Con `scores` vacía, `/games` muestra 9 tarjetas, todas con mejor marca `0` y `0` partidas, en el orden de `sort_order`.
+- [x] `/` muestra como mini-tarjetas los 6 primeros juegos de `sort_order`.
+- [x] `/games/<id>` carga para los 9 juegos y muestra `AÚN NO HAY PUNTUACIONES` cuando el juego no tiene filas.
+- [x] Tras guardar una puntuación de Asteroides, `/games/asteroids` la muestra en `#01` con nombre, puntuación y fecha `DD/MM/YYYY`, `Partidas` vale `1` y `Mejor global` vale esa puntuación.
+- [x] Tras guardar una segunda puntuación menor con el mismo nombre, el ranking sigue mostrando una sola fila para ese nombre con la mejor marca y `Partidas` vale `2`.
+- [x] La tarjeta ASTEROIDES de `/games` muestra la mejor marca real.
 
 **Salón de la Fama**
 
-- [ ] `/hall-of-fame` muestra una pestaña por cada uno de los 9 juegos y cargar cualquiera no produce errores en consola.
-- [ ] Una pestaña sin puntuaciones muestra `AÚN NO HAY PUNTUACIONES` y no muestra podio ni tabla.
-- [ ] Una pestaña con 1 o 2 puntuaciones muestra el podio con `—` en los puestos vacíos, sin errores.
-- [ ] Una pestaña con más de 12 jugadores muestra solo 12 filas, ordenadas por puntuación descendente.
-- [ ] Con sesión cuyo nombre coincide con un jugador de ese juego, aparece "TU MEJOR MARCA" con su mejor puntuación y su rango real.
-- [ ] Con sesión sin puntuaciones en ese juego aparece `AÚN NO TIENES MARCA EN <JUEGO>`.
-- [ ] Sin sesión no aparece la fila "TU MEJOR MARCA".
+- [x] `/hall-of-fame` muestra una pestaña por cada uno de los 9 juegos y cargar cualquiera no produce errores en consola.
+- [x] Una pestaña sin puntuaciones muestra `AÚN NO HAY PUNTUACIONES` y no muestra podio ni tabla.
+- [x] Una pestaña con 1 o 2 puntuaciones muestra el podio con `—` en los puestos vacíos, sin errores.
+- [x] Una pestaña con más de 12 jugadores muestra solo 12 filas, ordenadas por puntuación descendente.
+- [x] Con sesión cuyo nombre coincide con un jugador de ese juego, aparece "TU MEJOR MARCA" con su mejor puntuación y su rango real.
+- [x] Con sesión sin puntuaciones en ese juego aparece `AÚN NO TIENES MARCA EN <JUEGO>`.
+- [x] Sin sesión no aparece la fila "TU MEJOR MARCA".
 
 **Home**
 
-- [ ] Con `scores` vacía, "ACTIVIDAD EN VIVO" muestra el estado vacío en ambas listas.
-- [ ] Con puntuaciones guardadas, las últimas puntuaciones muestran como máximo 7 filas, la más reciente primero, con el título del juego y `hace N min` (o equivalente).
-- [ ] El top de jugadores muestra como máximo 5 filas, con la mejor puntuación individual de cada nombre en cualquier juego.
+- [x] Con `scores` vacía, "ACTIVIDAD EN VIVO" muestra el estado vacío en ambas listas.
+- [x] Con puntuaciones guardadas, las últimas puntuaciones muestran como máximo 7 filas, la más reciente primero, con el título del juego y `hace N min` (o equivalente).
+- [x] El top de jugadores muestra como máximo 5 filas, con la mejor puntuación individual de cada nombre en cualquier juego.
 
 **Guardado**
 
-- [ ] Al terminar una partida de Asteroides y pulsar GUARDAR PUNTUACIÓN, `scores` recibe una fila con `game_id = 'asteroids'`, el nombre del modal y la puntuación mostrada.
-- [ ] Mientras dura el guardado el botón está deshabilitado, y un doble clic crea una sola fila.
-- [ ] El campo de nombre admite como máximo 16 caracteres y GUARDAR PUNTUACIÓN está deshabilitado con el nombre vacío o solo con espacios.
-- [ ] Con la petición bloqueada, el modal muestra un mensaje de error, no marca la puntuación como guardada y permite reintentar.
-- [ ] En un juego sin motor (por ejemplo `/games/rocas/play`), al terminar el modal no muestra GUARDAR PUNTUACIÓN, muestra `ESTE JUEGO ES UNA DEMO: LA PUNTUACIÓN NO SE GUARDA` y no se envía ningún `insert` a `scores`.
-- [ ] Una búsqueda de `av_scores` en `app/` no da resultados.
+- [x] Al terminar una partida de Asteroides y pulsar GUARDAR PUNTUACIÓN, `scores` recibe una fila con `game_id = 'asteroids'`, el nombre del modal y la puntuación mostrada.
+- [x] Mientras dura el guardado el botón está deshabilitado, y un doble clic crea una sola fila.
+- [x] El campo de nombre admite como máximo 16 caracteres y GUARDAR PUNTUACIÓN está deshabilitado con el nombre vacío o solo con espacios.
+- [x] Con la petición bloqueada, el modal muestra un mensaje de error, no marca la puntuación como guardada y permite reintentar.
+- [x] En un juego sin motor (por ejemplo `/games/rocas/play`), al terminar el modal no muestra GUARDAR PUNTUACIÓN, muestra `ESTE JUEGO ES UNA DEMO: LA PUNTUACIÓN NO SE GUARDA` y no se envía ningún `insert` a `scores`.
+- [x] Una búsqueda de `av_scores` en `app/` no da resultados.
 
 **Calidad**
 
-- [ ] `app/data/scores.ts` no contiene `seededScores` ni `PLAYERS`, y `app/data/games.ts` y `app/data/activity.ts` no contienen datos fijos de juegos ni de puntuaciones.
-- [ ] Una búsqueda de `service_role` en `app/`, `proxy.ts` y `scripts/` no da resultados.
-- [ ] `git diff` no contiene la publishable key ni `SUPABASE_DB_PASS`.
-- [ ] `app/components/SessionProvider.tsx` no tiene cambios.
-- [ ] La consola del navegador no muestra errores ni avisos de React en `/`, `/games`, `/games/asteroids`, `/games/asteroids/play` ni `/hall-of-fame`.
-- [ ] A 375 px de ancho, `/` y `/hall-of-fame` no tienen scroll horizontal.
+- [x] `app/data/scores.ts` no contiene `seededScores` ni `PLAYERS`, y `app/data/games.ts` y `app/data/activity.ts` no contienen datos fijos de juegos ni de puntuaciones.
+- [x] Una búsqueda de `service_role` en `app/`, `proxy.ts` y `scripts/` no da resultados.
+- [x] `git diff` no contiene la publishable key ni `SUPABASE_DB_PASS`.
+- [x] `app/components/SessionProvider.tsx` no tiene cambios.
+- [x] La consola del navegador no muestra errores ni avisos de React en `/`, `/games`, `/games/asteroids`, `/games/asteroids/play` ni `/hall-of-fame`.
+- [x] A 375 px de ancho, `/` y `/hall-of-fame` no tienen scroll horizontal.
 
 ---
 

@@ -538,6 +538,58 @@ a { color: inherit; text-decoration: none; }
   transform: rotate(-24deg);
 }
 
+/* TETRIS: un pozo con el hueco de cuatro filas esperando a la I, con su pieza
+   fantasma ya marcada abajo. Pozo = ::before; pieza y fantasma = ::after. */
+.cover-tetris {
+  background: radial-gradient(ellipse at 50% 115%, #4a3400 0%, #14110a 48%, #0a0a18 100%);
+}
+.cover-tetris::before,
+.cover-tetris::after {
+  content: "";
+  position: absolute;
+  left: 50%; top: 8%;
+  height: 84%;
+  aspect-ratio: 1 / 2;
+  transform: translateX(-50%);
+}
+.cover-tetris::before {
+  box-shadow: 0 0 0 2px rgba(255, 213, 79, 0.45), 0 0 18px rgba(255, 213, 79, 0.18);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), rgba(0,0,0,0.55) calc(10% - 1px) 10%) 0 100% / 100% 25% no-repeat,
+    repeating-linear-gradient(0deg, transparent 0 calc(20% - 1px), rgba(0,0,0,0.55) calc(20% - 1px) 20%) 0 100% / 100% 25% no-repeat,
+    linear-gradient(#e57373, #e57373) 0% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#e57373, #e57373) 0% 100% / 10% 10% no-repeat,
+    linear-gradient(#e57373, #e57373) 11.111% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#ffb74d, #ffb74d) 11.111% 100% / 10% 10% no-repeat,
+    linear-gradient(#ffb74d, #ffb74d) 22.222% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#ffb74d, #ffb74d) 22.222% 100% / 10% 10% no-repeat,
+    linear-gradient(#ba68c8, #ba68c8) 44.444% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#ba68c8, #ba68c8) 44.444% 100% / 10% 10% no-repeat,
+    linear-gradient(#81c784, #81c784) 55.556% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#ba68c8, #ba68c8) 55.556% 100% / 10% 10% no-repeat,
+    linear-gradient(#81c784, #81c784) 66.667% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#81c784, #81c784) 66.667% 100% / 10% 10% no-repeat,
+    linear-gradient(#ffd54f, #ffd54f) 77.778% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#81c784, #81c784) 77.778% 100% / 10% 10% no-repeat,
+    linear-gradient(#ffd54f, #ffd54f) 88.889% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#ffd54f, #ffd54f) 88.889% 100% / 10% 10% no-repeat,
+    linear-gradient(#7986cb, #7986cb) 100% 88.889% / 10% 10% no-repeat,
+    linear-gradient(#7986cb, #7986cb) 100% 100% / 10% 10% no-repeat,
+    linear-gradient(#ffb74d, #ffb74d) 0% 78.947% / 10% 5% no-repeat,
+    linear-gradient(#ffb74d, #ffb74d) 11.111% 78.947% / 10% 5% no-repeat,
+    linear-gradient(#7986cb, #7986cb) 88.889% 78.947% / 10% 5% no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), rgba(255,255,255,0.05) calc(10% - 1px) 10%),
+    repeating-linear-gradient(0deg, transparent 0 calc(5% - 1px), rgba(255,255,255,0.05) calc(5% - 1px) 5%),
+    rgba(6, 6, 12, 0.88);
+}
+.cover-tetris::after {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 calc(25% - 2px), rgba(0,0,0,0.5) calc(25% - 2px) 25%) 33.333% 18.75% / 10% 20% no-repeat,
+    linear-gradient(#4dd0e1, #4dd0e1) 33.333% 18.75% / 10% 20% no-repeat,
+    linear-gradient(rgba(77, 208, 225, 0.22), rgba(77, 208, 225, 0.22)) 33.333% 100% / 10% 20% no-repeat;
+  filter: drop-shadow(0 0 6px rgba(77, 208, 225, 0.65));
+}
+
 .cover-rana { background: linear-gradient(180deg,#001f2a,#0a0a18); }
 .cover-rana::after {
   content: "";

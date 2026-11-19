@@ -7,12 +7,13 @@ import type { Game } from "../data/games";
 import { ENGINES } from "../lib/games/registry";
 import { createClient } from "../lib/supabase/client";
 import type { TablesInsert } from "../lib/supabase/database.types";
-import type { GameEngineFactory, GameStats } from "../lib/games/types";
+import type { GameStats } from "../lib/games/types";
 import GameCanvas, { type GameCanvasHandle } from "./GameCanvas";
 import { useSession } from "./SessionProvider";
 
 type SaveStatus = "idle" | "saving" | "error";
 
+// Vidas de la simulación (juegos sin motor).
 const LIVES = 3;
 const POINTS_PER_LEVEL = 2500;
 
@@ -20,10 +21,12 @@ export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
   const { user } = useSession();
   // Si el juego tiene motor real, se usa el canvas; si no, la simulación.
-  const factory = ENGINES[game.id] as GameEngineFactory | undefined;
+  const engine = ENGINES[game.id];
+  const factory = engine?.factory;
+  const initialLives = engine?.initialLives ?? LIVES;
   const canvasHandle = useRef<GameCanvasHandle>(null);
   const [runId, setRunId] = useState(0);
-  const [engineLives, setEngineLives] = useState(LIVES);
+  const [engineLives, setEngineLives] = useState(initialLives);
   const [engineLevel, setEngineLevel] = useState(1);
   const [score, setScore] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -44,7 +47,7 @@ export default function GamePlayer({ game }: { game: Game }) {
 
   const resetStats = () => {
     setScore(0);
-    setEngineLives(LIVES);
+    setEngineLives(initialLives);
     setEngineLevel(1);
   };
 
@@ -164,10 +167,12 @@ export default function GamePlayer({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          {factory ? (
+          {engine ? (
             <GameCanvas
               ref={canvasHandle}
-              factory={factory}
+              factory={engine.factory}
+              width={engine.width}
+              height={engine.height}
               paused={paused}
               runId={runId}
               onStats={handleStats}
@@ -214,7 +219,7 @@ export default function GamePlayer({ game }: { game: Game }) {
           <span>{game.title} · CRT-83 · 60 HZ</span>
           <span>CARGA · 1MB</span>
         </div>
-        {factory && (
+        {engine && (
           <div
             className="mono"
             style={{
@@ -225,7 +230,7 @@ export default function GamePlayer({ game }: { game: Game }) {
               letterSpacing: "0.12em",
             }}
           >
-            ← → ROTAR · ↑ PROPULSAR · ESPACIO DISPARAR · ↓ ESCUDO · P PAUSA
+            {engine.controls}
           </div>
         )}
       </div>

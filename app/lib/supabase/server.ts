@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { Database } from "./database.types";
 
 // Se crea por petición: las cookies son por petición y reutilizar una
 // instancia mezclaría sesiones entre usuarios. No guardar en variable de módulo.
@@ -18,7 +19,7 @@ export async function createClient() {
 
   const cookieStore = await cookies();
 
-  return createServerClient(url, key, {
+  return createServerClient<Database>(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

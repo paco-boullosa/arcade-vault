@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Game } from "../data/games";
 import { ENGINES } from "../lib/games/registry";
+import { createClient } from "../lib/supabase/client";
+import type { TablesInsert } from "../lib/supabase/database.types";
 import type { GameEngineFactory, GameStats } from "../lib/games/types";
 import GameCanvas, { type GameCanvasHandle } from "./GameCanvas";
 import { useSession } from "./SessionProvider";
 
-type SavedScore = { game: string; score: number; name: string; at: number };
+type SaveStatus = "idle" | "saving" | "error";
 
 const LIVES = 3;
 const POINTS_PER_LEVEL = 2500;
@@ -30,6 +32,9 @@ export default function GamePlayer({ game }: { game: Game }) {
   // tras montar) o INVITADO.
   const [nameDraft, setNameDraft] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  // Evita que un doble clic envíe dos inserts antes de que se pinte `saving`.
+  const savingRef = useRef(false);
 
   const name = nameDraft ?? user?.name ?? "INVITADO";
   const level = factory
@@ -48,6 +53,7 @@ export default function GamePlayer({ game }: { game: Game }) {
     setPaused(false);
     setOver(false);
     setSaved(false);
+    setSaveStatus("idle");
     setRunId((r) => r + 1);
   };
 
@@ -68,6 +74,7 @@ export default function GamePlayer({ game }: { game: Game }) {
     setPaused(false);
     setOver(false);
     setSaved(false);
+    setSaveStatus("idle");
   };
 
   // Los botones sueltan el foco tras pulsarse para que Espacio no los reactive.
@@ -86,23 +93,28 @@ export default function GamePlayer({ game }: { game: Game }) {
     e.currentTarget.blur();
   };
 
-  const saveScore = () => {
+  const trimmedName = name.trim();
+
+  const saveScore = async () => {
+    if (savingRef.current || !trimmedName) return;
+    savingRef.current = true;
+    setSaveStatus("saving");
+
+    const row: TablesInsert<"scores"> = {
+      game_id: game.id,
+      player_name: trimmedName,
+      score,
+    };
     try {
-      const raw = localStorage.getItem("av_scores");
-      const all: unknown = raw ? JSON.parse(raw) : [];
-      const list = Array.isArray(all) ? all : [];
-      const entry: SavedScore = {
-        game: game.id,
-        score,
-        name,
-        at: Date.now(),
-      };
-      list.push(entry);
-      localStorage.setItem("av_scores", JSON.stringify(list));
+      const { error } = await createClient().from("scores").insert(row);
+      if (error) throw error;
+      setSaved(true);
+      setSaveStatus("idle");
     } catch {
-      // localStorage bloqueado: la puntuación no se persiste.
+      setSaveStatus("error");
+    } finally {
+      savingRef.current = false;
     }
-    setSaved(true);
   };
 
   useEffect(() => {
@@ -224,19 +236,56 @@ export default function GamePlayer({ game }: { game: Game }) {
             <h2>FIN DEL JUEGO</h2>
             <div className="final-label">PUNTUACIÓN FINAL</div>
             <div className="final">{score.toLocaleString("es-ES")}</div>
-            {!saved ? (
-              <div className="input-row">
-                <input
-                  value={name}
-                  onChange={(e) =>
-                    setNameDraft(e.target.value.toUpperCase().slice(0, 10))
-                  }
-                  placeholder="TUS INICIALES"
-                />
-                <button className="btn yellow" onClick={saveScore}>
-                  GUARDAR PUNTUACIÓN
-                </button>
+            {!factory ? (
+              <div
+                className="mono"
+                style={{
+                  fontSize: 11,
+                  color: "var(--ink-dim)",
+                  letterSpacing: "0.12em",
+                  margin: "12px 0",
+                }}
+              >
+                ESTE JUEGO ES UNA DEMO: LA PUNTUACIÓN NO SE GUARDA
               </div>
+            ) : !saved ? (
+              <>
+                <div className="input-row">
+                  <input
+                    value={name}
+                    maxLength={16}
+                    onChange={(e) =>
+                      setNameDraft(e.target.value.toUpperCase().slice(0, 16))
+                    }
+                    placeholder="TUS INICIALES"
+                  />
+                  <button
+                    className="btn yellow"
+                    onClick={saveScore}
+                    disabled={saveStatus === "saving" || !trimmedName}
+                  >
+                    {saveStatus === "saving"
+                      ? "GUARDANDO…"
+                      : saveStatus === "error"
+                        ? "REINTENTAR"
+                        : "GUARDAR PUNTUACIÓN"}
+                  </button>
+                </div>
+                {saveStatus === "error" && (
+                  <div
+                    className="mono"
+                    role="alert"
+                    style={{
+                      fontSize: 11,
+                      color: "var(--magenta)",
+                      letterSpacing: "0.12em",
+                      marginTop: 8,
+                    }}
+                  >
+                    NO SE PUDO GUARDAR LA PUNTUACIÓN. INTÉNTALO DE NUEVO.
+                  </div>
+                )}
+              </>
             ) : (
               <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>
             )}

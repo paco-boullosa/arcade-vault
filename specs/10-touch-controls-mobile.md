@@ -1,6 +1,6 @@
 # SPEC 10 — Controles táctiles para jugar en el móvil
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06, SPEC 07, SPEC 08, SPEC 09
 > **Date:** 2026-11-20
 > **Objective:** Añadir al reproductor, solo en dispositivos móviles (ancho de hasta 640 px y puntero táctil), un mando táctil (cruz de dirección, dos botones de acción y una fila de PAUSA, SKIN, FIN y SALIR) anclado en la parte inferior de la ventana, con la barra de navegación oculta en esa pantalla, para poder jugar a Asteroids, Tetris, Arkanoid y Snake con el dedo sin tocar los motores.
@@ -140,55 +140,55 @@ Este spec no introduce tablas ni cambios en Supabase.
 
 **Calidad**
 
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
-- [ ] La consola no muestra errores ni avisos de React en `/games/<id>/play` de los 4 juegos, ni a 390 px ni a 1280 px.
-- [ ] `git diff --stat -- app/games` no muestra cambios: los motores no se tocan.
-- [ ] A 375 px de ancho no hay scroll horizontal en `/games/<id>/play` ni en el modal de fin de partida.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
+- [x] La consola no muestra errores ni avisos de React en `/games/<id>/play` de los 4 juegos, ni a 390 px ni a 1280 px.
+- [x] `git diff --stat -- app/games` no muestra cambios: los motores no se tocan.
+- [x] A 375 px de ancho no hay scroll horizontal en `/games/<id>/play` ni en el modal de fin de partida.
 
 **Escritorio y no móvil**
 
-- [ ] A 1280 px el reproductor es idéntico al actual: se ve `.player-hud`, `.crt-bottom`, la línea de controles de teclado, la barra de navegación y el pie, y `.touch-controls` no se ve.
-- [ ] A 1280 px el teclado sigue funcionando en Asteroids, Tetris, Arkanoid y Snake (mover, empezar, pausar con `P` y cambiar skin).
-- [ ] Una ventana de escritorio de 390 px de ancho con ratón (`pointer: fine`) muestra el reproductor de escritorio: `.touch-controls` no se ve y la barra de navegación sí.
-- [ ] Una pantalla táctil de más de 640 px de ancho (p. ej. una tablet) muestra el reproductor de escritorio y no el mando.
+- [x] A 1280 px el reproductor es idéntico al actual: se ve `.player-hud`, `.crt-bottom`, la línea de controles de teclado, la barra de navegación y el pie, y `.touch-controls` no se ve.
+- [x] A 1280 px el teclado sigue funcionando en Asteroids, Tetris, Arkanoid y Snake (mover, empezar, pausar con `P` y cambiar skin).
+- [x] Una ventana de escritorio de 390 px de ancho con ratón (`pointer: fine`) muestra el reproductor de escritorio: `.touch-controls` no se ve y la barra de navegación sí.
+- [x] Una pantalla táctil de más de 640 px de ancho (p. ej. una tablet) muestra el reproductor de escritorio y no el mando.
 
 **Maquetación móvil (640 px o menos con `pointer: coarse`)**
 
-- [ ] En los 4 juegos con motor, `.player-hud`, `.crt-bottom`, la línea de controles de teclado, la barra de navegación (`.av-nav`) y el pie no se muestran (`display: none` calculado).
-- [ ] El canvas ocupa el ancho disponible, conserva la proporción 4:3 y queda por encima del mando.
-- [ ] Bajo el canvas, en este orden, se ve la fila fina (PAUSA, SKIN, FIN y SALIR, más FANTASMA y MENÚ en Tetris) y debajo la cruz a la izquierda y los botones B y A a la derecha.
-- [ ] El borde inferior de `.touch-controls` coincide con el borde inferior de la ventana (descontado el área segura) a 390×844 y a 360×740.
-- [ ] A 390×844 y a 360×740 el canvas y el mando completo caben sin scroll vertical: `document.documentElement.scrollHeight` no supera `window.innerHeight`.
-- [ ] Al abrir el modal de fin de partida, el mando sigue en su sitio y el modal queda por encima.
-- [ ] Cada botón del mando mide al menos 44×44 px CSS.
-- [ ] Las etiquetas del mando tienen un contraste de al menos 4,5:1 sobre su fondo.
-- [ ] Un juego sin motor (`gloton`) a 390 px con puntero táctil conserva su HUD y su barra de navegación y no muestra el mando.
-- [ ] La barra de navegación sigue visible en el resto de pantallas (`/`, `/games`, `/games/<id>`, `/hall-of-fame`, `/about`) a 390 px con puntero táctil.
-- [ ] Al salir del juego con SALIR (navegación cliente) y volver a `/games/<id>`, la barra de navegación se ve y la página hace scroll (la clase `av-touch-play` ya no está en `<body>`).
+- [x] En los 4 juegos con motor, `.player-hud`, `.crt-bottom`, la línea de controles de teclado, la barra de navegación (`.av-nav`) y el pie no se muestran (`display: none` calculado).
+- [x] El canvas ocupa el ancho disponible, conserva la proporción 4:3 y queda por encima del mando.
+- [x] Bajo el canvas, en este orden, se ve la fila fina (PAUSA, SKIN, FIN y SALIR, más FANTASMA y MENÚ en Tetris) y debajo la cruz a la izquierda y los botones B y A a la derecha.
+- [x] El borde inferior de `.touch-controls` coincide con el borde inferior de la ventana (descontado el área segura) a 390×844 y a 360×740.
+- [x] A 390×844 y a 360×740 el canvas y el mando completo caben sin scroll vertical: `document.documentElement.scrollHeight` no supera `window.innerHeight`.
+- [x] Al abrir el modal de fin de partida, el mando sigue en su sitio y el modal queda por encima.
+- [x] Cada botón del mando mide al menos 44×44 px CSS.
+- [x] Las etiquetas del mando tienen un contraste de al menos 4,5:1 sobre su fondo.
+- [x] Un juego sin motor (`gloton`) a 390 px con puntero táctil conserva su HUD y su barra de navegación y no muestra el mando.
+- [x] La barra de navegación sigue visible en el resto de pantallas (`/`, `/games`, `/games/<id>`, `/hall-of-fame`, `/about`) a 390 px con puntero táctil.
+- [x] Al salir del juego con SALIR (navegación cliente) y volver a `/games/<id>`, la barra de navegación se ve y la página hace scroll (la clase `av-touch-play` ya no está en `<body>`).
 
 **Entrada táctil**
 
-- [ ] Snake: pulsar una flecha de la cruz arranca la partida y gira la serpiente; tras `Game over`, un toque en A reinicia con puntuación 0; SKIN cambia la skin y el nombre aparece en el canvas.
-- [ ] Arkanoid: mantener `←` o `→` mueve la pala y al soltar se detiene; A lanza la bola, continúa tras `Nivel N completado` y reinicia tras `Game over`.
-- [ ] Asteroids: mantener `←` o `→` rota la nave de forma continua y `↑` propulsa; A dispara; mantener B activa el escudo y al soltar se apaga.
-- [ ] Tetris: en el menú, `↑` y `↓` de la cruz cambian el modo y A lo elige; mantener `←`, `→` o `↓` repite el movimiento (primer paso inmediato, repetición tras 250 ms y cada 70 ms); un toque en B rota la pieza una sola vez; A hace caer la pieza; FANTASMA alterna la pieza fantasma; MENÚ vuelve al menú desde `Game over`.
-- [ ] Los botones atenuados (`↓` en Asteroids, `↑` y `↓` en Arkanoid, B en Arkanoid y Snake) no envían ninguna tecla.
-- [ ] Se puede mantener un dedo en la cruz y tocar A con otro a la vez (p. ej. rotar y disparar en Asteroids).
-- [ ] Soltar el dedo fuera del botón, cancelar el gesto, pasar la pestaña a segundo plano o salir de la página no deja ninguna tecla atascada: la nave deja de rotar y la pala deja de moverse.
-- [ ] PAUSA congela el juego y el botón pasa a REANUDAR; FIN abre el modal con la puntuación actual; SALIR lleva a `/games/<id>`.
-- [ ] La repetición de teclas del mando no crea bucles duplicados tras el doble montaje de StrictMode ni tras salir y volver al juego.
+- [x] Snake: pulsar una flecha de la cruz arranca la partida y gira la serpiente; tras `Game over`, un toque en A reinicia con puntuación 0; SKIN cambia la skin y el nombre aparece en el canvas.
+- [x] Arkanoid: mantener `←` o `→` mueve la pala y al soltar se detiene; A lanza la bola, continúa tras `Nivel N completado` y reinicia tras `Game over`.
+- [x] Asteroids: mantener `←` o `→` rota la nave de forma continua y `↑` propulsa; A dispara; mantener B activa el escudo y al soltar se apaga.
+- [x] Tetris: en el menú, `↑` y `↓` de la cruz cambian el modo y A lo elige; mantener `←`, `→` o `↓` repite el movimiento (primer paso inmediato, repetición tras 250 ms y cada 70 ms); un toque en B rota la pieza una sola vez; A hace caer la pieza; FANTASMA alterna la pieza fantasma; MENÚ vuelve al menú desde `Game over`.
+- [x] Los botones atenuados (`↓` en Asteroids, `↑` y `↓` en Arkanoid, B en Arkanoid y Snake) no envían ninguna tecla.
+- [x] Se puede mantener un dedo en la cruz y tocar A con otro a la vez (p. ej. rotar y disparar en Asteroids).
+- [x] Soltar el dedo fuera del botón, cancelar el gesto, pasar la pestaña a segundo plano o salir de la página no deja ninguna tecla atascada: la nave deja de rotar y la pala deja de moverse.
+- [x] PAUSA congela el juego y el botón pasa a REANUDAR; FIN abre el modal con la puntuación actual; SALIR lleva a `/games/<id>`.
+- [x] La repetición de teclas del mando no crea bucles duplicados tras el doble montaje de StrictMode ni tras salir y volver al juego.
 
 **Gestos del navegador**
 
-- [ ] Arrastrar el dedo sobre el canvas o sobre el mando no desplaza la página (`window.scrollY` no cambia).
-- [ ] El canvas y `.touch-controls` tienen `touch-action: none` y `user-select: none` calculados.
-- [ ] Una pulsación larga o un doble toque sobre un botón no abre menú contextual, no selecciona texto y no hace zoom.
+- [x] Arrastrar el dedo sobre el canvas o sobre el mando no desplaza la página (`window.scrollY` no cambia).
+- [x] El canvas y `.touch-controls` tienen `touch-action: none` y `user-select: none` calculados.
+- [x] Una pulsación larga o un doble toque sobre un botón no abre menú contextual, no selecciona texto y no hace zoom.
 
 **Leaderboard**
 
-- [ ] Al terminar una partida en emulación táctil se abre el modal con la misma puntuación, se puede escribir un nombre con espacios (sin que `Espacio` reinicie ni `P` pause) y GUARDAR PUNTUACIÓN inserta una sola fila en `scores` con el `game_id` correcto.
-- [ ] Tras las pruebas, `scores` no contiene filas de prueba.
-- [ ] Una búsqueda de `service_role` en `app/` no da resultados.
+- [x] Al terminar una partida en emulación táctil se abre el modal con la misma puntuación, se puede escribir un nombre con espacios (sin que `Espacio` reinicie ni `P` pause) y GUARDAR PUNTUACIÓN inserta una sola fila en `scores` con el `game_id` correcto.
+- [x] Tras las pruebas, `scores` no contiene filas de prueba.
+- [x] Una búsqueda de `service_role` en `app/` no da resultados.
 
 ---
 

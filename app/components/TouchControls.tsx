@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import type { TouchConfig } from "../lib/games/registry";
 import { createKeyHold } from "../lib/games/touch";
@@ -25,18 +31,24 @@ function HoldButton({
 }: HoldButtonProps) {
   const releaseRef = useRef<() => void>(() => {});
   const pressRef = useRef<() => void>(() => {});
+  // Estado visual de pulsado: `:active` es poco fiable en iOS con setPointerCapture.
+  const [on, setOn] = useState(false);
 
   useEffect(() => {
     const hold = createKeyHold(code, { repeat });
     pressRef.current = hold.press;
     releaseRef.current = hold.release;
-    const onHidden = () => {
-      if (document.hidden) hold.release();
+    const onBlur = () => {
+      hold.release();
+      setOn(false);
     };
-    window.addEventListener("blur", hold.release);
+    const onHidden = () => {
+      if (document.hidden) onBlur();
+    };
+    window.addEventListener("blur", onBlur);
     document.addEventListener("visibilitychange", onHidden);
     return () => {
-      window.removeEventListener("blur", hold.release);
+      window.removeEventListener("blur", onBlur);
       document.removeEventListener("visibilitychange", onHidden);
       // Libera la tecla y cancela el temporizador al desmontar.
       hold.release();
@@ -45,10 +57,15 @@ function HoldButton({
     };
   }, [code, repeat]);
 
+  const release = () => {
+    releaseRef.current();
+    setOn(false);
+  };
+
   return (
     <button
       type="button"
-      className={`touch-btn ${className}`}
+      className={`touch-btn ${className}${on ? " on" : ""}`}
       aria-label={label}
       disabled={disabled}
       tabIndex={-1}
@@ -60,11 +77,12 @@ function HoldButton({
               // El puntero queda capturado: el dedo puede salir del botón sin soltarlo.
               e.currentTarget.setPointerCapture(e.pointerId);
               pressRef.current();
+              setOn(true);
             }
       }
-      onPointerUp={() => releaseRef.current()}
-      onPointerCancel={() => releaseRef.current()}
-      onLostPointerCapture={() => releaseRef.current()}
+      onPointerUp={release}
+      onPointerCancel={release}
+      onLostPointerCapture={release}
       onContextMenu={(e) => e.preventDefault()}
     >
       {children}
@@ -134,7 +152,9 @@ export default function TouchControls({
             label="Arriba"
             disabled={!dpad.up}
           >
-            ↑
+            <svg className="touch-arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 4 L20 16 L4 16 Z" fill="currentColor" />
+            </svg>
           </HoldButton>
           <HoldButton
             code="ArrowLeft"
@@ -143,7 +163,9 @@ export default function TouchControls({
             label="Izquierda"
             disabled={!dpad.left}
           >
-            ←
+            <svg className="touch-arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16 4 L16 20 L4 12 Z" fill="currentColor" />
+            </svg>
           </HoldButton>
           <HoldButton
             code="ArrowRight"
@@ -152,7 +174,9 @@ export default function TouchControls({
             label="Derecha"
             disabled={!dpad.right}
           >
-            →
+            <svg className="touch-arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 4 L20 12 L8 20 Z" fill="currentColor" />
+            </svg>
           </HoldButton>
           <HoldButton
             code="ArrowDown"
@@ -161,8 +185,13 @@ export default function TouchControls({
             label="Abajo"
             disabled={!dpad.down}
           >
-            ↓
+            <svg className="touch-arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 8 L20 8 L12 20 Z" fill="currentColor" />
+            </svg>
           </HoldButton>
+          <div className="touch-hub" aria-hidden="true">
+            <span className="touch-hub-gem" />
+          </div>
         </div>
         <div className="touch-actions">
           {b ? (
@@ -171,7 +200,8 @@ export default function TouchControls({
               className="touch-action-btn touch-b"
               label={b.label}
             >
-              {b.label}
+              <span className="touch-ring" />
+              <span className="touch-ab-text">{b.short}</span>
             </HoldButton>
           ) : (
             // Sin B en este juego: se mantiene el hueco, atenuado y sin acción.
@@ -181,7 +211,8 @@ export default function TouchControls({
               label="B (sin acción)"
               disabled
             >
-              B
+              <span className="touch-ring" />
+              <span className="touch-ab-text">B</span>
             </HoldButton>
           )}
           <HoldButton
@@ -189,7 +220,8 @@ export default function TouchControls({
             className="touch-action-btn touch-a"
             label={a.label}
           >
-            {a.label}
+            <span className="touch-ring" />
+            <span className="touch-ab-text">{a.short}</span>
           </HoldButton>
         </div>
       </div>

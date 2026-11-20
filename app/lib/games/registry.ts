@@ -4,7 +4,11 @@ import { createSnakeGame } from "../../games/snake/engine";
 import { createTetrisGame } from "../../games/tetris/engine";
 import type { GameEngineFactory } from "./types";
 
-export type TouchButton = { code: string; label: string };
+export type TouchButton = {
+  code: string;
+  label: string; // nombre completo: aria-label y fila fina
+  short: string; // 3 letras en mayúsculas, dentro del botón circular
+};
 
 // Mando táctil de un juego. Los `code` son los `KeyboardEvent.code` que lee cada motor.
 export type TouchConfig = {
@@ -39,8 +43,8 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     touch: {
       // ↓ es el escudo, que ya cubre el botón B.
       dpad: { up: true, down: false, left: true, right: true },
-      a: { code: "Space", label: "DISPARAR" },
-      b: { code: "ArrowDown", label: "ESCUDO" },
+      a: { code: "Space", label: "DISPARAR", short: "FR" },
+      b: { code: "ArrowDown", label: "ESCUDO", short: "SH" },
       skin: "KeyS",
     },
   },
@@ -53,12 +57,12 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     initialLives: 1,
     touch: {
       dpad: { up: true, down: true, left: true, right: true },
-      a: { code: "Space", label: "CAER" },
-      b: { code: "KeyX", label: "ROTAR" },
+      a: { code: "Space", label: "CAER", short: "CAE" },
+      b: { code: "KeyX", label: "ROTAR", short: "ROT" },
       skin: "KeyS",
       extras: [
-        { code: "KeyG", label: "FANTASMA" },
-        { code: "KeyM", label: "MENÚ" },
+        { code: "KeyG", label: "FANTASMA", short: "GHOST" },
+        { code: "KeyM", label: "MENÚ", short: "MENU" },
       ],
     },
   },
@@ -70,7 +74,7 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     initialLives: 3,
     touch: {
       dpad: { up: false, down: false, left: true, right: true },
-      a: { code: "Space", label: "LANZAR" },
+      a: { code: "Space", label: "LANZAR", short: "A" },
       skin: "KeyS",
     },
   },
@@ -83,7 +87,7 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     initialLives: 1,
     touch: {
       dpad: { up: true, down: true, left: true, right: true },
-      a: { code: "Space", label: "EMPEZAR" },
+      a: { code: "Space", label: "EMPEZAR", short: "A" },
       skin: "KeyK",
     },
   },

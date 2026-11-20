@@ -3021,14 +3021,13 @@ a {
   animation: blink 1s steps(1) infinite;
 }
 
-/* Mando táctil (SPEC 10): oculto hasta el paso de maquetación móvil. */
+/* Mando táctil (SPEC 10): oculto salvo en móvil (ver media query siguiente). */
 .touch-controls {
   display: none;
 }
 
-/* ===== mando táctil (SPEC 10) =====
-   Solo móvil: ancho <= 640px y puntero táctil. Maquetación base y utilizable;
-   la pantalla completa (paso 7) y el estilo final (paso 8) van después. */
+/* ===== mando táctil (SPEC 10) + apariencia MK-II (SPEC 11) =====
+   Solo móvil: ancho <= 640px y puntero táctil. */
 @media (max-width: 640px) and (pointer: coarse) {
   .av-player--engine .player-hud,
   .av-player--engine .crt-bottom,
@@ -3047,10 +3046,6 @@ a {
   }
 
   .av-player--engine .touch-controls {
-    /* Medidas que escalan con el ancho: a 320px siguen cabiendo cruz + A + B. */
-    --cell: min(52px, 14vw);
-    --a-size: min(88px, 24vw);
-    --b-size: min(72px, 19vw);
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -3098,123 +3093,275 @@ a {
     opacity: 0.5;
   }
 
+  /* Carcasa del gamepad MK-II (SPEC 11): contiene solo la cruz y A/B. */
   .touch-pad {
+    --ink-dim: #8a8fb5;
+    --line: rgba(0, 245, 255, 0.18);
+    position: relative;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
+    padding: 12px 14px 10px;
+    background: linear-gradient(180deg, #1c1c28 0%, #0c0c14 100%);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow:
+      0 30px 80px -30px rgba(0, 245, 255, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.02),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.6);
+  }
+  .touch-pad::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(0, 245, 255, 0.14);
+    border-radius: 12px;
+    pointer-events: none;
+  }
+  .touch-pad::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    );
+    background-size: 8px 8px;
+    border-radius: inherit;
+    opacity: 0.6;
+    pointer-events: none;
   }
 
-  /* Cruz: una sola pieza de 3x3 con el centro cerrado. */
+  /* Cruz: caja de 144x144 con botones de 46x46 en posición absoluta. */
   .touch-dpad {
-    display: grid;
-    grid-template-columns: repeat(3, var(--cell));
-    grid-template-rows: repeat(3, var(--cell));
-  }
-  .touch-dpad::before {
-    content: "";
-    grid-area: 2 / 2;
-    background: var(--bg-3);
-    box-shadow: inset 0 0 0 1px var(--line);
-  }
-  .touch-up {
-    grid-area: 1 / 2;
-    border-radius: 10px 10px 0 0;
-  }
-  .touch-left {
-    grid-area: 2 / 1;
-    border-radius: 10px 0 0 10px;
-  }
-  .touch-right {
-    grid-area: 2 / 3;
-    border-radius: 0 10px 10px 0;
-  }
-  .touch-down {
-    grid-area: 3 / 2;
-    border-radius: 0 0 10px 10px;
+    position: relative;
+    z-index: 1;
+    width: 144px;
+    height: 144px;
+    flex: none;
   }
   .touch-dpad-btn {
+    position: absolute;
+    width: 46px;
+    height: 46px;
     min-width: 0;
     padding: 0;
-    font-size: 20px;
-    color: var(--cyan);
-    background: var(--bg-3);
-    border-color: transparent;
-    box-shadow: inset 0 0 0 1px var(--line);
-  }
-  .touch-dpad-btn:active:not(:disabled) {
+    color: var(--ink-dim);
+    background: linear-gradient(180deg, #1a1a25, #0a0a12);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
     box-shadow:
-      inset 0 0 0 1px var(--cyan),
-      inset 0 0 14px rgba(0, 245, 255, 0.35),
-      0 0 12px rgba(0, 245, 255, 0.3);
+      0 4px 0 #050507,
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.6);
+    transition:
+      transform 80ms,
+      box-shadow 140ms,
+      color 140ms,
+      border-color 140ms,
+      background 140ms;
+  }
+  .touch-up {
+    top: 0;
+    left: 49px;
+  }
+  .touch-down {
+    bottom: 0;
+    left: 49px;
+  }
+  .touch-left {
+    top: 49px;
+    left: 0;
+  }
+  .touch-right {
+    top: 49px;
+    right: 0;
+  }
+  .touch-arrow {
+    width: 22px;
+    height: 22px;
+    transition: filter 140ms;
+  }
+  /* .on lo pone HoldButton; :active queda de respaldo. */
+  .touch-dpad-btn.on,
+  .touch-dpad-btn:active:not(:disabled) {
+    transform: translateY(3px);
+    color: var(--cyan);
+    background: linear-gradient(180deg, #08161e, #030a0e);
+    border-color: var(--cyan);
+    box-shadow:
+      0 1px 0 #050507,
+      inset 0 0 16px rgba(0, 245, 255, 0.45),
+      0 0 16px rgba(0, 245, 255, 0.5);
+  }
+  /* drop-shadow solo en la flecha activa (coste de repintado). */
+  .touch-dpad-btn.on .touch-arrow,
+  .touch-dpad-btn:active:not(:disabled) .touch-arrow {
+    filter: drop-shadow(0 0 6px var(--cyan)) drop-shadow(0 0 12px var(--cyan));
   }
   .touch-dpad-btn:disabled {
     color: var(--ink-dim);
-    box-shadow: inset 0 0 0 1px var(--line-2);
+    border-style: solid;
+    opacity: 0.35;
   }
 
-  /* Acciones en diagonal, como un mando de arcade: B abajo, A arriba. */
-  .touch-actions {
+  .touch-hub {
+    position: absolute;
+    top: 49px;
+    left: 49px;
+    width: 46px;
+    height: 46px;
     display: flex;
-    align-items: flex-end;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 50%, #181822 0%, #08080d 80%);
+    border: 1px solid rgba(0, 245, 255, 0.15);
+    border-radius: 6px;
+    box-shadow:
+      inset 0 0 12px rgba(0, 0, 0, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    pointer-events: none;
+  }
+  .touch-hub-gem {
+    width: 12px;
+    height: 12px;
+    background: var(--cyan);
+    box-shadow:
+      0 0 10px var(--cyan),
+      inset 0 0 4px rgba(0, 0, 0, 0.5);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    animation: pulse-led 2s ease-in-out infinite;
+  }
+
+  /* Acciones: B (cian) a la izquierda y A (magenta) a la derecha. */
+  .touch-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-right: 8px; /* hueco para el anillo discontinuo de A */
   }
   .touch-action-btn {
+    --ab-bg:
+      radial-gradient(
+        circle at 32% 26%,
+        rgba(255, 255, 255, 0.25),
+        transparent 50%
+      ),
+      radial-gradient(circle at 50% 55%, var(--ab-mid), var(--ab-deep) 75%);
+    position: relative;
+    width: 64px;
+    height: 64px;
+    min-width: 0;
     padding: 0;
     border-radius: 50%;
-    letter-spacing: 0.02em;
+    border: 2px solid currentColor;
+    background: var(--ab-bg);
+    box-shadow:
+      0 6px 0 #050507,
+      0 0 22px var(--ab-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.4);
+    transition:
+      transform 80ms,
+      box-shadow 140ms;
   }
   .touch-a {
-    width: var(--a-size);
-    height: var(--a-size);
-    margin-bottom: 26px;
-    color: var(--yellow);
-    background: radial-gradient(
-      circle at 50% 35%,
-      rgba(245, 255, 0, 0.22),
-      rgba(245, 255, 0, 0.05) 70%
-    );
-    border-color: var(--yellow);
-    box-shadow:
-      0 0 16px rgba(245, 255, 0, 0.3),
-      inset 0 0 14px rgba(245, 255, 0, 0.2);
-  }
-  .touch-a:active:not(:disabled) {
-    background: radial-gradient(
-      circle at 50% 50%,
-      rgba(245, 255, 0, 0.4),
-      rgba(245, 255, 0, 0.12) 75%
-    );
-    border-color: var(--yellow);
-    box-shadow:
-      0 0 6px rgba(245, 255, 0, 0.3),
-      inset 0 0 22px rgba(245, 255, 0, 0.45);
-    transform: translateY(2px) scale(0.96);
+    color: var(--magenta);
+    --ab-mid: rgba(255, 0, 110, 0.7);
+    --ab-deep: rgba(110, 0, 40, 0.95);
+    --ab-glow: rgba(255, 0, 110, 0.4);
   }
   .touch-b {
-    width: var(--b-size);
-    height: var(--b-size);
-    color: var(--magenta);
-    border-color: var(--magenta);
-    box-shadow: inset 0 0 10px rgba(255, 0, 110, 0.18);
+    color: var(--cyan);
+    --ab-mid: rgba(0, 105, 128, 0.8);
+    --ab-deep: rgba(0, 50, 70, 0.95);
+    --ab-glow: rgba(0, 245, 255, 0.4);
   }
-  .touch-b:active:not(:disabled) {
-    background: rgba(255, 0, 110, 0.22);
-    border-color: var(--magenta);
+  .touch-ab-text {
+    position: relative;
+    z-index: 2;
+    font-family: var(--pixel);
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: #fff;
+  }
+  .touch-a .touch-ab-text {
+    text-shadow:
+      0 0 8px var(--magenta),
+      0 0 18px var(--magenta),
+      0 1px 0 rgba(0, 0, 0, 0.6);
+  }
+  .touch-b .touch-ab-text {
+    text-shadow:
+      0 0 8px var(--cyan),
+      0 0 18px var(--cyan),
+      0 1px 0 rgba(0, 0, 0, 0.6);
+  }
+  .touch-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px dashed currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 140ms,
+      transform 200ms;
+  }
+  /* .on lo pone HoldButton; :active queda de respaldo. Se restablece el fondo
+     y el borde porque .touch-btn:active los sustituye por los de la fila fina. */
+  .touch-action-btn.on,
+  .touch-action-btn:active:not(:disabled) {
+    background: var(--ab-bg);
+    border-color: currentColor;
+    transform: translateY(4px) scale(0.97);
     box-shadow:
-      inset 0 0 18px rgba(255, 0, 110, 0.5),
-      0 0 10px rgba(255, 0, 110, 0.35);
-    transform: translateY(2px) scale(0.96);
+      0 1px 0 #050507,
+      0 0 36px var(--ab-glow),
+      inset 0 0 18px rgba(0, 0, 0, 0.5);
   }
-  .touch-b:disabled {
-    color: var(--ink-dim);
-    border-color: var(--ink-faint);
-    box-shadow: none;
+  .touch-action-btn.on .touch-ring,
+  .touch-action-btn:active:not(:disabled) .touch-ring {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  /* Atenuado (B en Arkanoid y Snake): sin anillo ni relieve de pulsado. */
+  .touch-action-btn:disabled {
+    border-style: solid;
+    opacity: 0.35;
+    box-shadow: 0 6px 0 #050507;
+  }
+  /* Pantallas muy estrechas: A/B de 56 px y menos separación. */
+  @media (max-width: 359px) {
+    .touch-pad {
+      gap: 4px;
+      padding-inline: 6px;
+    }
+    .touch-actions {
+      gap: 12px;
+      padding-right: 0;
+    }
+    .touch-action-btn {
+      width: 56px;
+      height: 56px;
+    }
+    .touch-ab-text {
+      font-size: 12px;
+    }
   }
   .touch-btn:focus-visible {
     outline: 2px solid var(--cyan);
     outline-offset: 2px;
   }
   @media (prefers-reduced-motion: reduce) {
+    .touch-hub-gem {
+      animation: none;
+    }
     .touch-btn {
       transition: none;
     }

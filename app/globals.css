@@ -3020,3 +3020,232 @@ a {
 .term-body .caret {
   animation: blink 1s steps(1) infinite;
 }
+
+/* Mando táctil (SPEC 10): oculto hasta el paso de maquetación móvil. */
+.touch-controls {
+  display: none;
+}
+
+/* ===== mando táctil (SPEC 10) =====
+   Solo móvil: ancho <= 640px y puntero táctil. Maquetación base y utilizable;
+   la pantalla completa (paso 7) y el estilo final (paso 8) van después. */
+@media (max-width: 640px) and (pointer: coarse) {
+  .av-player--engine .player-hud,
+  .av-player--engine .crt-bottom,
+  .av-player--engine .crt-hint {
+    display: none;
+  }
+  .av-player--engine .crt {
+    padding: 8px;
+  }
+  .av-player--engine canvas,
+  .av-player--engine .touch-controls {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .av-player--engine .touch-controls {
+    /* Medidas que escalan con el ancho: a 320px siguen cabiendo cruz + A + B. */
+    --cell: min(52px, 14vw);
+    --a-size: min(88px, 24vw);
+    --b-size: min(72px, 19vw);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  /* Fila fina: discreta, para que mande la zona de juego. */
+  .touch-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .touch-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 8px;
+    font-family: var(--pixel);
+    font-size: 8px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-decoration: none;
+    transition:
+      background 80ms,
+      border-color 80ms,
+      box-shadow 80ms,
+      transform 80ms;
+  }
+  .touch-bar-btn {
+    flex: 1 1 auto;
+  }
+  .touch-btn:active:not(:disabled) {
+    background: rgba(0, 245, 255, 0.16);
+    border-color: var(--cyan);
+  }
+  /* Atenuado: sin acción. Borde discontinuo para que no parezca pulsable. */
+  .touch-btn:disabled {
+    color: var(--ink-dim);
+    border-style: dashed;
+    opacity: 0.5;
+  }
+
+  .touch-pad {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  /* Cruz: una sola pieza de 3x3 con el centro cerrado. */
+  .touch-dpad {
+    display: grid;
+    grid-template-columns: repeat(3, var(--cell));
+    grid-template-rows: repeat(3, var(--cell));
+  }
+  .touch-dpad::before {
+    content: "";
+    grid-area: 2 / 2;
+    background: var(--bg-3);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .touch-up {
+    grid-area: 1 / 2;
+    border-radius: 10px 10px 0 0;
+  }
+  .touch-left {
+    grid-area: 2 / 1;
+    border-radius: 10px 0 0 10px;
+  }
+  .touch-right {
+    grid-area: 2 / 3;
+    border-radius: 0 10px 10px 0;
+  }
+  .touch-down {
+    grid-area: 3 / 2;
+    border-radius: 0 0 10px 10px;
+  }
+  .touch-dpad-btn {
+    min-width: 0;
+    padding: 0;
+    font-size: 20px;
+    color: var(--cyan);
+    background: var(--bg-3);
+    border-color: transparent;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .touch-dpad-btn:active:not(:disabled) {
+    box-shadow:
+      inset 0 0 0 1px var(--cyan),
+      inset 0 0 14px rgba(0, 245, 255, 0.35),
+      0 0 12px rgba(0, 245, 255, 0.3);
+  }
+  .touch-dpad-btn:disabled {
+    color: var(--ink-dim);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+
+  /* Acciones en diagonal, como un mando de arcade: B abajo, A arriba. */
+  .touch-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  .touch-action-btn {
+    padding: 0;
+    border-radius: 50%;
+    letter-spacing: 0.02em;
+  }
+  .touch-a {
+    width: var(--a-size);
+    height: var(--a-size);
+    margin-bottom: 26px;
+    color: var(--yellow);
+    background: radial-gradient(
+      circle at 50% 35%,
+      rgba(245, 255, 0, 0.22),
+      rgba(245, 255, 0, 0.05) 70%
+    );
+    border-color: var(--yellow);
+    box-shadow:
+      0 0 16px rgba(245, 255, 0, 0.3),
+      inset 0 0 14px rgba(245, 255, 0, 0.2);
+  }
+  .touch-a:active:not(:disabled) {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(245, 255, 0, 0.4),
+      rgba(245, 255, 0, 0.12) 75%
+    );
+    border-color: var(--yellow);
+    box-shadow:
+      0 0 6px rgba(245, 255, 0, 0.3),
+      inset 0 0 22px rgba(245, 255, 0, 0.45);
+    transform: translateY(2px) scale(0.96);
+  }
+  .touch-b {
+    width: var(--b-size);
+    height: var(--b-size);
+    color: var(--magenta);
+    border-color: var(--magenta);
+    box-shadow: inset 0 0 10px rgba(255, 0, 110, 0.18);
+  }
+  .touch-b:active:not(:disabled) {
+    background: rgba(255, 0, 110, 0.22);
+    border-color: var(--magenta);
+    box-shadow:
+      inset 0 0 18px rgba(255, 0, 110, 0.5),
+      0 0 10px rgba(255, 0, 110, 0.35);
+    transform: translateY(2px) scale(0.96);
+  }
+  .touch-b:disabled {
+    color: var(--ink-dim);
+    border-color: var(--ink-faint);
+    box-shadow: none;
+  }
+  .touch-btn:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .touch-btn {
+      transition: none;
+    }
+    .touch-btn:active {
+      transform: none;
+    }
+  }
+
+  /* Pantalla completa sin scroll: sin navegación ni pie, el mando pegado abajo.
+     .av-main no tiene padding vertical, así que no hay nada que quitar. */
+  body.av-touch-play .av-nav,
+  body.av-touch-play #root > footer {
+    display: none;
+  }
+  body.av-touch-play,
+  body.av-touch-play #root {
+    overflow: hidden;
+  }
+  .av-player--engine {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    margin: 0;
+    padding: 8px 16px 0;
+    overflow: hidden;
+  }
+  .av-player--engine .crt {
+    flex: none;
+  }
+  .av-player--engine .touch-controls {
+    margin-top: auto;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
+}

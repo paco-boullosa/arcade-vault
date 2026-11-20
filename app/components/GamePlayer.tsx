@@ -10,6 +10,7 @@ import type { TablesInsert } from "../lib/supabase/database.types";
 import type { GameStats } from "../lib/games/types";
 import GameCanvas, { type GameCanvasHandle } from "./GameCanvas";
 import { useSession } from "./SessionProvider";
+import TouchControls from "./TouchControls";
 
 type SaveStatus = "idle" | "saving" | "error";
 
@@ -129,8 +130,19 @@ export default function GamePlayer({ game }: { game: Game }) {
     return () => clearInterval(t);
   }, [factory, over, paused]);
 
+  // Marca el body mientras se juega con motor, para que el CSS móvil oculte la
+  // navegación y el pie (viven en el layout). Con `:has(.av-player--engine)`
+  // no basta: Next conserva la página anterior oculta en el DOM al navegar y
+  // la regla seguiría activa en la ficha del juego. El cleanup corre al
+  // desmontar y también cuando Next oculta la página.
+  useEffect(() => {
+    if (!engine) return;
+    document.body.classList.add("av-touch-play");
+    return () => document.body.classList.remove("av-touch-play");
+  }, [engine]);
+
   return (
-    <div className="av-player fade-in">
+    <div className={`av-player fade-in${engine ? " av-player--engine" : ""}`}>
       <div className="player-hud">
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           <div className="hud-stat">
@@ -221,7 +233,7 @@ export default function GamePlayer({ game }: { game: Game }) {
         </div>
         {engine && (
           <div
-            className="mono"
+            className="mono crt-hint"
             style={{
               marginTop: 12,
               textAlign: "center",
@@ -234,6 +246,17 @@ export default function GamePlayer({ game }: { game: Game }) {
           </div>
         )}
       </div>
+
+      {/* Solo se ve en móvil (CSS). Con motor, envía teclas sintéticas. */}
+      {engine && (
+        <TouchControls
+          touch={engine.touch}
+          paused={paused}
+          onTogglePause={togglePause}
+          onFinish={finish}
+          exitHref={`/games/${game.id}`}
+        />
+      )}
 
       {over && (
         <div className="modal-bd">

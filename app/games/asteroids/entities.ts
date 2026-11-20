@@ -7,6 +7,7 @@ import {
   TRIPLE_SPREAD,
   W,
 } from "./constants";
+import { glowOff, glowOn, type Skin } from "./skins";
 import { rand, randInt, wrap } from "./utils";
 
 // Teclas mantenidas, indexadas por `KeyboardEvent.code`.
@@ -37,11 +38,13 @@ export class Bullet {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = "#fff";
+  draw(ctx: CanvasRenderingContext2D, skin: Skin): void {
+    ctx.fillStyle = skin.bullet;
+    glowOn(ctx, skin, skin.bullet);
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
+    glowOff(ctx, skin);
   }
 }
 
@@ -94,11 +97,12 @@ export class Asteroid {
     ];
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  draw(ctx: CanvasRenderingContext2D, skin: Skin): void {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rot);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = skin.asteroid;
+    glowOn(ctx, skin, skin.asteroid);
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -106,6 +110,10 @@ export class Asteroid {
     for (let i = 1; i < this.verts.length; i++)
       ctx.lineTo(this.verts[i][0], this.verts[i][1]);
     ctx.closePath();
+    if (skin.asteroidFill) {
+      ctx.fillStyle = skin.asteroidFill;
+      ctx.fill();
+    }
     ctx.stroke();
     ctx.restore();
   }
@@ -139,9 +147,9 @@ export class Particle {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  draw(ctx: CanvasRenderingContext2D, skin: Skin): void {
     const alpha = this.ttl / this.life;
-    ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+    ctx.strokeStyle = `rgba(${skin.particle},${alpha.toFixed(2)})`;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
@@ -177,14 +185,14 @@ export class PowerUp {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  draw(ctx: CanvasRenderingContext2D, skin: Skin): void {
     // Parpadeo durante los últimos 2s
     if (this.ttl < 2 && Math.floor(this.ttl * 8) % 2 === 0) return;
 
     const r = this.radius + Math.sin(this.age * 6) * 2;
     ctx.save();
     ctx.translate(this.x, this.y);
-    ctx.strokeStyle = "#0ff";
+    ctx.strokeStyle = skin.powerUp;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.arc(0, 0, r, 0, Math.PI * 2);
@@ -270,21 +278,25 @@ export class Ship {
     return [new Bullet(ox, oy, this.angle)];
   }
 
-  drawShield(ctx: CanvasRenderingContext2D, shieldTimer: number): void {
+  drawShield(
+    ctx: CanvasRenderingContext2D,
+    shieldTimer: number,
+    skin: Skin,
+  ): void {
     if (this.dead || shieldTimer <= 0) return;
     // Parpadeo en el último 1.5s
     if (shieldTimer < 1.5 && Math.floor(shieldTimer * 8) % 2 === 0) return;
     const r = SHIELD_RADIUS + Math.sin(shieldTimer * 8) * 1.5;
     ctx.beginPath();
     ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(80,180,255,0.08)";
+    ctx.fillStyle = `rgba(${skin.shield},0.08)`;
     ctx.fill();
-    ctx.strokeStyle = "rgba(80,180,255,0.85)";
+    ctx.strokeStyle = `rgba(${skin.shield},0.85)`;
     ctx.lineWidth = 2;
     ctx.stroke();
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  draw(ctx: CanvasRenderingContext2D, skin: Skin): void {
     if (this.dead) return;
     // Parpadeo durante invencibilidad de reaparición
     if (this.invincible > 0 && Math.floor(this.invincible * 8) % 2 === 0)
@@ -293,7 +305,8 @@ export class Ship {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = skin.ship;
+    glowOn(ctx, skin, skin.ship);
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
 
@@ -305,6 +318,7 @@ export class Ship {
     ctx.lineTo(-12, 9); // ala derecha
     ctx.closePath();
     ctx.stroke();
+    glowOff(ctx, skin);
 
     // Llama del propulsor
     if (this.thrusting && Math.random() > 0.35) {
@@ -312,7 +326,7 @@ export class Ship {
       ctx.moveTo(-8, -4);
       ctx.lineTo(-8 - rand(6, 14), 0);
       ctx.lineTo(-8, 4);
-      ctx.strokeStyle = "rgba(255, 130, 0, 0.85)";
+      ctx.strokeStyle = skin.flame;
       ctx.stroke();
     }
 

@@ -20,7 +20,7 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     factory: createAsteroidsGame,
     width: 800,
     height: 600,
-    controls: "← → ROTAR · ↑ PROPULSAR · ESPACIO DISPARAR · ↓ ESCUDO · P PAUSA",
+    controls: "← → ROTAR · ↑ PROPULSAR · ESPACIO DISPARAR · ↓ ESCUDO · S SKIN · P PAUSA",
     initialLives: 3,
   },
   tetris: {
@@ -35,14 +35,14 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     factory: createArkanoidGame,
     width: 800,
     height: 600,
-    controls: "← → MOVER · ESPACIO LANZAR · ENTER CONTINUAR · P PAUSA",
+    controls: "← → MOVER · ESPACIO LANZAR · ENTER CONTINUAR · P PAUSA · S SKIN",
     initialLives: 3,
   },
   snake: {
     factory: createSnakeGame,
     width: 800,
     height: 600,
-    controls: "← ↑ → ↓ / WASD MOVER · ESPACIO EMPEZAR/REINICIAR · P PAUSA",
+    controls: "← ↑ → ↓ / WASD MOVER · ESPACIO EMPEZAR/REINICIAR · P PAUSA · K SKIN",
     initialLives: 1,
   },
 };

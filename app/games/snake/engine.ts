@@ -15,6 +15,7 @@ import {
   stepInterval,
 } from "./logic";
 import { drawScene } from "./render";
+import { loadSkin, nextSkin, saveSkin, SKINS } from "./skins";
 import { loadSprites } from "./sprites";
 
 type Phase = "ready" | "playing" | "gameover" | "won";
@@ -46,6 +47,7 @@ export function createSnakeGame(
   let gameOverEmitted = false;
   let lastStats: GameStats | null = null;
   let destroyed = false;
+  let skin = loadSkin();
 
   function level(): number {
     return levelFor(fruitsEaten);
@@ -181,6 +183,7 @@ export function createSnakeGame(
       ctx,
       { phase, paused, snake, dir, fruit, score, level: level() },
       sprites,
+      skin,
     );
   }
 
@@ -253,7 +256,9 @@ export function createSnakeGame(
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
     const turn = TURN_KEYS[e.code];
-    if (!turn && e.code !== "Space" && e.code !== "KeyP") return;
+    if (!turn && e.code !== "Space" && e.code !== "KeyP" && e.code !== "KeyK") {
+      return;
+    }
     // preventDefault solo en teclas del juego (evita el scroll con flechas y Espacio).
     e.preventDefault();
 
@@ -268,6 +273,15 @@ export function createSnakeGame(
     }
     // En pausa el teclado del juego esta bloqueado.
     if (paused) return;
+
+    // K: cambia de skin (tambien con la partida terminada; S ya es "abajo").
+    if (e.code === "KeyK") {
+      if (e.repeat) return;
+      skin = SKINS[nextSkin(skin.id)];
+      saveSkin(skin.id);
+      draw();
+      return;
+    }
 
     if (turn) {
       queueTurn(turn);

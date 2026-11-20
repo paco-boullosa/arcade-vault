@@ -23,6 +23,7 @@ import {
   Ship,
   type KeyState,
 } from "./entities";
+import { loadSkin, nextSkin, saveSkin, SKINS } from "./skins";
 import { dist, rand, randInt } from "./utils";
 
 const GAME_KEYS = ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
@@ -47,6 +48,8 @@ export function createAsteroidsGame(
   canvas.width = W;
   canvas.height = H;
 
+  let skin = loadSkin();
+
   // ── Entrada ─────────────────────────────────────────────────────────────────
   const keys: KeyState = {};
   const justPressed: KeyState = {};
@@ -55,6 +58,15 @@ export function createAsteroidsGame(
     if (isIgnoredTarget(e.target)) return;
     if (e.code === "KeyP") {
       if (!e.repeat) togglePause(true);
+      return;
+    }
+    if (e.code === "KeyS") {
+      // Cambia de skin (también con la partida terminada; no en pausa)
+      if (!e.repeat && !paused) {
+        skin = SKINS[nextSkin(skin.id)];
+        saveSkin(skin.id);
+        draw();
+      }
       return;
     }
     justPressed[e.code] = !keys[e.code];
@@ -315,7 +327,7 @@ export function createAsteroidsGame(
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(-Math.PI / 2);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = skin.ship;
     ctx.lineWidth = 1.2;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -329,7 +341,7 @@ export function createAsteroidsGame(
   }
 
   function drawHUD() {
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = skin.text;
     ctx.font = "15px monospace";
 
     ctx.textAlign = "left";
@@ -337,49 +349,54 @@ export function createAsteroidsGame(
 
     ctx.textAlign = "center";
     ctx.fillText(`NIVEL ${level}`, W / 2, 26);
+    ctx.textAlign = "right";
+    ctx.fillStyle = skin.textDim;
+    ctx.fillText(`SKIN ${skin.name.toUpperCase()}`, W - 14, H - 14);
+    ctx.fillStyle = skin.text;
+    ctx.textAlign = "center";
 
     for (let i = 0; i < lives; i++) drawLifeIcon(W - 16 - i * 22, 18);
 
     if (tripleShotTimer > 0) {
       ctx.textAlign = "left";
-      ctx.fillStyle = "#0ff";
+      ctx.fillStyle = skin.triple;
       ctx.fillText(`TRIPLE  ${Math.ceil(tripleShotTimer)}s`, 14, 46);
     }
 
     const shieldY = tripleShotTimer > 0 ? 66 : 46;
     if (shieldTimer > 0) {
       ctx.textAlign = "left";
-      ctx.fillStyle = "rgb(80,180,255)";
+      ctx.fillStyle = `rgb(${skin.shield})`;
       ctx.fillText(`ESCUDO  ${Math.ceil(shieldTimer)}s`, 14, shieldY);
     } else if (shieldAvailable) {
       ctx.textAlign = "left";
-      ctx.fillStyle = "rgba(80,180,255,0.55)";
+      ctx.fillStyle = `rgba(${skin.shield},0.7)`;
       ctx.fillText("ESCUDO  [↓]", 14, shieldY);
     }
   }
 
   function drawOverlay(title: string, sub?: string) {
     ctx.textAlign = "center";
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = skin.text;
     ctx.font = "bold 46px monospace";
     ctx.fillText(title, W / 2, H / 2 - 18);
     if (sub) {
       ctx.font = "18px monospace";
-      ctx.fillStyle = "rgba(255,255,255,0.65)";
+      ctx.fillStyle = skin.textDim;
       ctx.fillText(sub, W / 2, H / 2 + 22);
     }
   }
 
   function draw() {
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = skin.bg;
     ctx.fillRect(0, 0, W, H);
 
-    particles.forEach((p) => p.draw(ctx));
-    asteroids.forEach((a) => a.draw(ctx));
-    if (powerUp) powerUp.draw(ctx);
-    bullets.forEach((b) => b.draw(ctx));
-    ship.draw(ctx);
-    ship.drawShield(ctx, shieldTimer);
+    particles.forEach((p) => p.draw(ctx, skin));
+    asteroids.forEach((a) => a.draw(ctx, skin));
+    if (powerUp) powerUp.draw(ctx, skin);
+    bullets.forEach((b) => b.draw(ctx, skin));
+    ship.draw(ctx, skin);
+    ship.drawShield(ctx, shieldTimer, skin);
 
     drawHUD();
 

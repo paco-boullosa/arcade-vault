@@ -40,6 +40,7 @@ yarn-error.log*
 # reference files
 /references/*
 !/references/implemented-games.md
+!/references/game-planner-todo.md
 
 # vercel
 .vercel

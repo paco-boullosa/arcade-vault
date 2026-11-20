@@ -7,6 +7,16 @@ import {
   type BlockColor,
 } from "./constants";
 import { EXPLOSION_FRAMES, loadSprites } from "./sprites";
+import {
+  drawShapeBall,
+  drawShapeBlock,
+  drawShapeExplosion,
+  drawShapePaddle,
+  loadSkin,
+  nextSkin,
+  saveSkin,
+  SKINS,
+} from "./skins";
 import { collideBlocks, createBlocks, type Ball, type Block } from "./utils";
 import type { GameEngineFactory, GameStats } from "../../lib/games/types";
 
@@ -270,6 +280,7 @@ export const createArkanoidGame: GameEngineFactory = (canvas, events) => {
   );
 
   const ctx = canvas.getContext("2d");
+  let skin = loadSkin();
 
   function currentStats(): GameStats {
     const { score, lives, level } = core.state;
@@ -297,7 +308,7 @@ export const createArkanoidGame: GameEngineFactory = (canvas, events) => {
     if (!ctx) return;
     ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
     ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = skin.text;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = "bold 48px monospace";
@@ -313,10 +324,14 @@ export const createArkanoidGame: GameEngineFactory = (canvas, events) => {
     const { state } = core;
     const p = state.paddle;
     const b = state.ball;
-    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = skin.bg;
+    ctx.fillRect(0, 0, W, H);
 
     for (const blk of state.blocks) {
-      if (blk.alive) {
+      if (!blk.alive) continue;
+      if (!skin.sprites) {
+        drawShapeBlock(ctx, skin, blk.color, blk.x, blk.y, blk.w, blk.h);
+      } else {
         sprites.drawSprite(
           ctx,
           `block_${blk.color}`,
@@ -328,6 +343,11 @@ export const createArkanoidGame: GameEngineFactory = (canvas, events) => {
       }
     }
     for (const ex of state.explosions) {
+      if (!skin.sprites) {
+        const t = Math.min(1, ex.elapsed / EXPLOSION_DURATION);
+        drawShapeExplosion(ctx, skin, ex.color, ex.x, ex.y, ex.w, ex.h, t);
+        continue;
+      }
       const i = Math.min(3, Math.floor(ex.elapsed / (EXPLOSION_DURATION / 4)));
       sprites.drawFrame(
         ctx,
@@ -338,11 +358,16 @@ export const createArkanoidGame: GameEngineFactory = (canvas, events) => {
         ex.h,
       );
     }
-    sprites.drawSprite(ctx, "paddle", p.x, p.y, p.w, p.h);
-    sprites.drawSprite(ctx, "ball", b.x, b.y, b.size, b.size);
+    if (skin.sprites) {
+      sprites.drawSprite(ctx, "paddle", p.x, p.y, p.w, p.h);
+      sprites.drawSprite(ctx, "ball", b.x, b.y, b.size, b.size);
+    } else {
+      drawShapePaddle(ctx, skin, p.x, p.y, p.w, p.h);
+      drawShapeBall(ctx, skin, b.x, b.y, b.size);
+    }
 
     // HUD
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = skin.text;
     ctx.font = "20px monospace";
     ctx.textBaseline = "top";
     ctx.textAlign = "left";
@@ -351,6 +376,10 @@ export const createArkanoidGame: GameEngineFactory = (canvas, events) => {
     ctx.fillText(`Nivel ${state.level}`, W / 2, 16);
     ctx.textAlign = "right";
     ctx.fillText(`Vidas: ${state.lives}`, W - 16, 16);
+    ctx.fillStyle = skin.textDim;
+    ctx.font = "12px monospace";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`SKIN ${skin.name.toUpperCase()}`, W - 14, H - 6);
 
     if (state.phase === "levelclear") {
       drawOverlay(
@@ -395,6 +424,14 @@ export const createArkanoidGame: GameEngineFactory = (canvas, events) => {
       return;
     }
     if (paused) return;
+
+    if (e.code === "KeyS") {
+      // Cambia de skin (también con la partida terminada; no en pausa)
+      skin = SKINS[nextSkin(skin.id)];
+      saveSkin(skin.id);
+      draw();
+      return;
+    }
 
     const confirm = e.code === "Enter" || e.code === "Space";
     if (ended && confirm) {

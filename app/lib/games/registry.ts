@@ -20,7 +20,7 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
     factory: createAsteroidsGame,
     width: 800,
     height: 600,
-    controls: "← → ROTAR · ↑ PROPULSAR · ESPACIO DISPARAR · ↓ ESCUDO · P PAUSA",
+    controls: "← → ROTAR · ↑ PROPULSAR · ESPACIO DISPARAR · ↓ ESCUDO · S SKIN · P PAUSA",
     initialLives: 3,
   },
   tetris: {

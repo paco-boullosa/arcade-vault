@@ -33,6 +33,7 @@ Env vars: see `.env.example` (`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FRO
 
 - `game-planner` agent (`.claude/agents/game-planner.md`): decides which game fits the platform before `/nuevo-juego`. Logs every proposal (including other people's suggestions) in `references/game-planner-todo.md` and keeps project memory in `.claude/agent-memory/game-planner/`. It never writes code or specs.
 - `game-jam` agent (`.claude/agents/game-jam.md`): given a theme, designs one original game and writes at least two complete spec variants (A/B, format of SPEC 07–09, `Status: Draft`) in `specs/game-jam/<game-id>/` plus a `README.md` to compare them. Reads (never edits) the `game-planner` TODO and the catalog to avoid duplicates; no code, no commits. The chosen variant is renumbered into `specs/` via `/nuevo-juego`. Memory in `.claude/agent-memory/game-jam/`.
+- `skin-designer` agent (`.claude/agents/skin-designer.md`): given a game id, audits whether it has at least the skins classic (default, the current look), retro and neon, and implements the missing ones directly in `app/games/<id>/skins.ts`, following `app/games/tetris/skins.ts` (key selector, `<id>.skin` in `localStorage`, name shown on canvas, `controls` updated in the registry). Checks contrast against dark backgrounds (WCAG 3:1 / 4.5:1). Touches only that game's folder and its `controls` entry; no specs, migrations or commits. Memory in `.claude/agent-memory/skin-designer/`.
 
 ## Architecture
 

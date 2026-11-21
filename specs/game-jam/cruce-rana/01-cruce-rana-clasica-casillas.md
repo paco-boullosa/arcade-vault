@@ -1,9 +1,9 @@
-# GAME JAM — CRUCE RANA · Variante A: Clásica por casillas
+# GAME JAM — FROGGER · Variante A: Clásica por casillas
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 05, SPEC 06, SPEC 07
 > **Date:** 2026-11-19
-> **Objective:** Crear `cruce-rana`, un juego de cruzar carretera y río saltando casilla a casilla para llenar 5 casillas de meta, con 3 vidas, tiempo por rana y niveles de velocidad creciente, como motor TypeScript con canvas único y ranking en Supabase.
+> **Objective:** Crear `frogger`, un juego de cruzar carretera y río saltando casilla a casilla para llenar 5 casillas de meta, con 3 vidas, tiempo por rana y niveles de velocidad creciente, como motor TypeScript con canvas único y ranking en Supabase.
 
 ---
 
@@ -11,7 +11,7 @@
 
 Es el resultado de la game jam con el tema "Frogger" (cruzar la carretera y el río esquivando coches, saltando sobre troncos y tortugas y llegando a las casillas de meta). Se diseña una mecánica de género original: no se reproduce ningún juego concreto (ni nombre, ni personajes, ni arte, ni música). El título, el id y el aspecto (neón de la plataforma, formas del canvas) son propios.
 
-El catálogo ya tiene `ranaria` (ARCADE, `green`, `sort_order` 7), una simulación sin motor real (`cover-rana`). Este spec **no** la toca: crea el id nuevo `cruce-rana`, con el mismo patrón que SPEC 09 (`snake` junto a `serpentina`). `ranaria` queda como duplicado simulado. La alternativa de reutilizar el id `ranaria` está descrita en el `README.md` de la carpeta. Es un **supuesto del agente**.
+El catálogo ya tiene `ranaria` (ARCADE, `green`, `sort_order` 7), una simulación sin motor real (`cover-rana`). Este spec **no** la toca: crea el id nuevo `frogger`, con el mismo patrón que SPEC 09 (`snake` junto a `serpentina`). `ranaria` queda como duplicado simulado. La alternativa de reutilizar el id `ranaria` está descrita en el `README.md` de la carpeta. Es un **supuesto del agente**.
 
 Esta variante es la clásica: tres vidas, cinco casillas de meta que llenar, límite de tiempo por rana y un nivel nuevo cada vez que se llenan las cinco. La variante B comparte tablero, id y fila de `games`, pero cambia la mecánica (contrarreloj global, sin vidas ni casillas).
 
@@ -23,16 +23,16 @@ No hay assets de rana en `references/source-assets/` (solo `snake-assets`), así
 
 **Dentro:**
 
-- Motor en `app/games/cruce-rana/` (TypeScript puro, sin React, sin estado global).
+- Motor en `app/games/frogger/` (TypeScript puro, sin React, sin estado global).
 - Tablero de 20×15 celdas de 40 px: fila de meta, río de 5 carriles, mediana segura, carretera de 7 carriles y fila de salida.
 - Salto discreto de una celda con las flechas o WASD.
 - Vehículos (coches, camión, autobús) que matan al contacto; troncos y tortugas que transportan; tortugas que se sumergen cada cierto tiempo.
 - 5 casillas de meta; llenarlas todas sube de nivel.
 - 3 vidas, tiempo límite por rana, puntuación por avance, por casilla y por tiempo restante.
 - Pantallas del canvas: inicio (`Pulsa una flecha para empezar`), `PAUSA`, `Game over`.
-- Entrada en `ENGINES` con la clave `cruce-rana`.
-- Fila `cruce-rana` en `games` mediante una migración nueva y portada CSS `.cover-cruce-rana`, hecha con `/frontend-design`.
-- Guardado en `scores` con `game_id = 'cruce-rana'`.
+- Entrada en `ENGINES` con la clave `frogger`.
+- Fila `frogger` en `games` mediante una migración nueva y portada CSS `.cover-frogger`, hecha con `/frontend-design`.
+- Guardado en `scores` con `game_id = 'frogger'`.
 
 **Fuera de alcance (para otros specs):**
 
@@ -51,7 +51,7 @@ No hay assets de rana en `references/source-assets/` (solo `snake-assets`), así
 
 ## Modelo de datos
 
-Constantes (`app/games/cruce-rana/constants.ts`), definidas aquí porque no hay original:
+Constantes (`app/games/frogger/constants.ts`), definidas aquí porque no hay original:
 
 ```ts
 export const W = 800;
@@ -96,7 +96,7 @@ export const HOMES = [1, 5, 9, 13, 17]; // columna izquierda de cada hueco (x = 
 export const HOME_W = 80;
 ```
 
-Carriles (`app/games/cruce-rana/lanes.ts`). Cada objeto `k` (de 0 a `count − 1`) arranca en `x0 = k × spacing`. Posición en el instante `t` (segundos de juego): `x = ((x0 + dir × v × m × t) mod L) − len × 40`, con `L = count × spacing` y `m` el multiplicador de velocidad. En todos los carriles `L ≥ 800 + len × 40`, así que el salto de envoltura ocurre fuera de pantalla.
+Carriles (`app/games/frogger/lanes.ts`). Cada objeto `k` (de 0 a `count − 1`) arranca en `x0 = k × spacing`. Posición en el instante `t` (segundos de juego): `x = ((x0 + dir × v × m × t) mod L) − len × 40`, con `L = count × spacing` y `m` el multiplicador de velocidad. En todos los carriles `L ≥ 800 + len × 40`, así que el salto de envoltura ocurre fuera de pantalla.
 
 | Fila | Tipo                 | `dir` | `v` (px/s, nivel 1) | `len` (celdas) | `count` | `spacing` (px) | `L` (px) |
 | ---- | -------------------- | ----- | ------------------- | -------------- | ------- | -------------- | -------- |
@@ -154,8 +154,8 @@ Registro:
 
 ```ts
 // app/lib/games/registry.ts
-ENGINES["cruce-rana"] = {
-  factory: createCruceRanaGame,
+ENGINES["frogger"] = {
+  factory: createFroggerGame,
   width: 800,
   height: 600,
   controls: "← ↑ → ↓ / WASD SALTAR · ESPACIO EMPEZAR/REINICIAR · P PAUSA",
@@ -172,18 +172,18 @@ Fila nueva en `games` (verificada en la BD: hoy hay 8 juegos y el `sort_order` m
 ```sql
 insert into public.games (id, title, short, long, cat, cover, color, sort_order)
 values (
-  'cruce-rana',
-  'CRUCE RANA',
+  'frogger',
+  'FROGGER',
   'Cruza la carretera y el río y llena las 5 casillas de meta.',
   'Salta casilla a casilla entre coches y camiones, súbete a troncos y tortugas (algunas se sumergen) y llena las 5 casillas de meta antes de que se acabe el tiempo. Tienes 3 vidas y la velocidad sube cada nivel.',
   'ARCADE',
-  'cover-cruce-rana',
+  'cover-frogger',
   'green',
   13
 );
 ```
 
-El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin prometer power-ups ni modos que no existen. Puede dejar `ranaria` (`green`, `cover-rana`) con la misma tarjeta de color: la portada propia `.cover-cruce-rana` debe distinguirse de `.cover-rana`.
+El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin prometer power-ups ni modos que no existen. Puede dejar `ranaria` (`green`, `cover-rana`) con la misma tarjeta de color: la portada propia `.cover-frogger` debe distinguirse de `.cover-rana`.
 
 ---
 
@@ -192,12 +192,12 @@ El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin promete
 1. **Leer la documentación.** La guía de `node_modules/next/dist/docs/01-app` sobre componentes cliente y `cacheComponents`. No genera código.
 2. **Constantes y carriles.** Crear `constants.ts` y `lanes.ts` con los valores de esta spec. Manual: `npx tsc --noEmit` y la app sigue arrancando.
 3. **Reglas puras.** `logic.ts` con funciones puras: `laneX(lane, t, m)`, `speedMul(level)`, `timeFor(level)`, `turtleState(phaseMs)`, `platformAt(row, centerX, state)`, `hitsVehicle(frog, state)`, `homeAt(centerX, filled)`. Manual: `npx tsc --noEmit`.
-4. **Núcleo del motor.** `engine.ts`: estado en el cierre de `createCruceRanaGame`, `reset()`, fases, salto con bloqueo de 90 ms, arrastre en el río, colisiones, reloj, casillas, puntuación, vidas, nivel. Sin teclado aún.
-5. **Bucle y entrada.** `requestAnimationFrame` con `dt` limitado a 0,05 s, teclado en `window` ignorando `input`, `textarea` y `button`, `preventDefault` solo en flechas, `WASD`, `Espacio` y `P`. Manual: en `/games/cruce-rana/play` la rana salta, muere y llena casillas.
+4. **Núcleo del motor.** `engine.ts`: estado en el cierre de `createFroggerGame`, `reset()`, fases, salto con bloqueo de 90 ms, arrastre en el río, colisiones, reloj, casillas, puntuación, vidas, nivel. Sin teclado aún.
+5. **Bucle y entrada.** `requestAnimationFrame` con `dt` limitado a 0,05 s, teclado en `window` ignorando `input`, `textarea` y `button`, `preventDefault` solo en flechas, `WASD`, `Espacio` y `P`. Manual: en `/games/frogger/play` la rana salta, muere y llena casillas.
 6. **Dibujo.** Fondo por zonas, carriles, rana con ojos que miran en la dirección del último salto, animación de muerte, parpadeo de tortugas, HUD del canvas y pantallas `Pulsa una flecha para empezar`, `PAUSA`, `Game over`.
 7. **Ciclo de vida.** `start`, `pause`, `resume`, `restart`, `end`, `destroy`; tecla `P`; `onStats` solo cuando cambia un valor; un único `finish()` con indicador `gameOver` que llama a `onGameOver` una vez; `onRestart` al reiniciar con `Espacio` ignorando `e.repeat`.
-8. **Registro y catálogo.** Entrada `cruce-rana` en `ENGINES`; migración nueva en `supabase/migrations/` aplicada con `mcp__supabase__apply_migration`; portada `.cover-cruce-rana` en `app/globals.css` con `/frontend-design`.
-9. **Repaso.** `npm run lint`, `npx tsc --noEmit`, `npm run build`, partida completa guardada y comprobada en `/games/cruce-rana`, `/hall-of-fame` y `/`, consola, `get_advisors`, retirada de código muerto.
+8. **Registro y catálogo.** Entrada `frogger` en `ENGINES`; migración nueva en `supabase/migrations/` aplicada con `mcp__supabase__apply_migration`; portada `.cover-frogger` en `app/globals.css` con `/frontend-design`.
+9. **Repaso.** `npm run lint`, `npx tsc --noEmit`, `npm run build`, partida completa guardada y comprobada en `/games/frogger`, `/hall-of-fame` y `/`, consola, `get_advisors`, retirada de código muerto.
 
 ---
 
@@ -206,7 +206,7 @@ El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin promete
 **Calidad**
 
 - [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` terminan sin errores.
-- [ ] La consola no muestra errores ni avisos de React en `/games/cruce-rana/play`.
+- [ ] La consola no muestra errores ni avisos de React en `/games/frogger/play`.
 - [ ] A 375 px de ancho no hay scroll horizontal y el canvas no se deforma.
 - [ ] Asteroides, Tetris, Arkanoid y Snake conservan su canvas, su línea de controles y sus vidas iniciales (3, 1, 3 y 1).
 - [ ] StrictMode (doble montaje) y salir y volver no dejan dos bucles ni listeners duplicados: un coche del carril 13 recorre 70 px en 1 s, no 140.
@@ -214,9 +214,9 @@ El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin promete
 
 **Catálogo**
 
-- [ ] `/games` muestra 9 tarjetas y la de CRUCE RANA tiene portada propia `.cover-cruce-rana`, distinta de `.cover-rana`.
-- [ ] `/games/cruce-rana` y `/games/cruce-rana/play` responden 200.
-- [ ] `games` contiene la fila `cruce-rana` (`ARCADE`, `green`, `sort_order` 13) y `list_migrations` lista la migración.
+- [ ] `/games` muestra 9 tarjetas y la de FROGGER tiene portada propia `.cover-frogger`, distinta de `.cover-rana`.
+- [ ] `/games/frogger` y `/games/frogger/play` responden 200.
+- [ ] `games` contiene la fila `frogger` (`ARCADE`, `green`, `sort_order` 13) y `list_migrations` lista la migración.
 - [ ] La fila `ranaria` no cambia y sigue con simulación y sin botón de guardar.
 
 **Juego**
@@ -237,12 +237,12 @@ El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin promete
 - [ ] Al terminar el modal aparece con la misma puntuación, una sola vez (`onGameOver` una vez).
 - [ ] `Espacio` en `Game over` reinicia con puntuación 0, 3 `♥` y nivel 01, y cierra el modal. Si la tecla seguía pulsada (`e.repeat`), no reinicia hasta soltarla y volver a pulsar.
 - [ ] FIN abre el modal con la puntuación actual y JUGAR DE NUEVO reinicia.
-- [ ] La línea de controles aparece en `/games/cruce-rana/play` con las teclas de este juego y no en juegos sin motor.
+- [ ] La línea de controles aparece en `/games/frogger/play` con las teclas de este juego y no en juegos sin motor.
 
 **Leaderboard**
 
-- [ ] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'cruce-rana'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
-- [ ] Tras guardar, `/games/cruce-rana` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
+- [ ] GUARDAR PUNTUACIÓN inserta en `scores` una fila con `game_id = 'frogger'`, el nombre y la puntuación del modal. Un doble clic crea una sola fila.
+- [ ] Tras guardar, `/games/frogger` la muestra en `#01`, `Partidas` y `Mejor global` se actualizan, y aparece en `/hall-of-fame` y en la actividad de `/`.
 - [ ] Los juegos sin motor siguen con simulación y sin botón de guardar.
 - [ ] Tras las pruebas, `scores` no contiene filas de prueba.
 - [ ] Una búsqueda de `service_role` en `app/` no da resultados.
@@ -251,7 +251,7 @@ El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin promete
 
 ## Decisiones
 
-- **Sí:** id nuevo `cruce-rana` y título propio. **No:** reutilizar el id `ranaria` (supuesto del agente: mismo criterio que `snake` y `serpentina`; ver README) ni usar el nombre del juego que inspira el tema.
+- **Sí:** id nuevo `frogger` y título propio. **No:** reutilizar el id `ranaria` (supuesto del agente: mismo criterio que `snake` y `serpentina`; ver README) ni usar el nombre del juego que inspira el tema.
 - **Sí:** tres vidas, 5 casillas, reloj por rana y niveles (variante clásica). **No:** contrarreloj global ni sin vidas: es la variante B.
 - **Sí:** salto discreto de una celda con bloqueo de 90 ms e ignorando `e.repeat`. **No:** movimiento continuo o saltos encadenados al mantener la tecla.
 - **Sí:** rana con `x` continua en el río y aterrizaje redondeado a celda fuera de él. **No:** rana siempre pegada a la rejilla (impediría el arrastre).
@@ -261,7 +261,7 @@ El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin promete
 - **Sí:** `lives` y `level` reales, `initialLives: 3`. **No:** valores fijos.
 - **Sí:** formas del canvas y sin sonido. **No:** inventar assets de rana ni audio.
 - **Sí:** `Espacio` reinicia ignorando `e.repeat`; teclado en `window` ignorando `input`, `textarea` y `button`; `P` pausa. Patrón de SPEC 05, 07 y 08.
-- **Sí:** color `green` y categoría `ARCADE` existentes, portada propia `.cover-cruce-rana`. **No:** categoría nueva.
+- **Sí:** color `green` y categoría `ARCADE` existentes, portada propia `.cover-frogger`. **No:** categoría nueva.
 - **Sí (supuesto del agente):** `sort_order` 13 y 3 vidas fijas sin vida extra. **No:** vidas por puntos.
 
 ## Riesgos
@@ -270,7 +270,7 @@ El texto describe el juego real: 3 vidas, tiempo por rana y niveles. Sin promete
 | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | StrictMode duplica motores                                                  | `destroy()` cancela `requestAnimationFrame` y quita todos los listeners; criterio de aceptación                      |
 | Parecido excesivo con el juego que inspira el tema                          | Título, id, aspecto neón y números propios; solo se reutilizan mecánicas de género                                   |
-| Dos tarjetas verdes de rana (`ranaria` y `cruce-rana`) confunden al jugador | Portada distinta; el README propone la alternativa de reemplazar `ranaria`                                           |
+| Dos tarjetas verdes de rana (`ranaria` y `frogger`) confunden al jugador | Portada distinta; el README propone la alternativa de reemplazar `ranaria`                                           |
 | Río injusto por colisiones de borde                                         | Regla del centro de la rana dentro de la plataforma y valores numéricos fijos en la tabla de carriles                |
 | Salto de envoltura visible de vehículos o plataformas                       | `L ≥ 800 + len × 40` en todos los carriles; comprobado en el paso 3                                                  |
 | Tras pausar, el tiempo salta                                                | `lastTime` se reinicia en `resume()`; el reloj y los carriles usan `dt` y no tiempo absoluto; criterio de aceptación |

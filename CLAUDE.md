@@ -26,6 +26,7 @@ Env vars: see `.env.example` (`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FRO
 
 - Usa siempre /frontend-design para diseñar la interfaz de usuario.
 - `/nuevo-juego` (`.claude/skills/nuevo-juego/`): workflow to port a game from `references/started-games/` or create a new one, wired to the leaderboard. Spec first (Draft, wait for approval), then engine, registry, cover, `games` row and verification. Its `references/` (engine contract, platform integration, spec template, verification) are the source of truth for adding games.
+- `/spec-impl-game` (`.claude/skills/spec-impl-game/`): same as the global `/spec-impl` (approved spec → branch → step-by-step implementation) and, when the last step is done, runs the `skin-designer` and then the `mobile-porter` agents on the spec's game, strictly one after the other (both edit `ENGINES.<id>`). Use it for game specs; use `/spec-impl` for the rest.
 - PostToolUse hook (`.claude/hooks/format-and-lint.sh`): runs Prettier and `eslint --fix` on every file written or edited (skips `node_modules`, `.next`, `references`). An ESLint error blocks the edit, so fix it rather than ignore it.
 - `.mcp.json` configures the Supabase MCP server for this project (migrations, SQL, type generation, advisors).
 

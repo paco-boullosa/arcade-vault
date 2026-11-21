@@ -1032,6 +1032,136 @@ a {
   filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
 }
 
+/* FROGGER: corte del tablero (meta, río, mediana, carretera). La rana espera en
+   la mediana y un rastro de puntos marca su salto hacia la casilla central. */
+.cover-frogger {
+  background: linear-gradient(
+    180deg,
+    #0b2a18 0 14%,
+    #07173a 14% 50%,
+    #1a1033 50% 58%,
+    #1d1d26 58% 100%
+  );
+}
+.cover-frogger::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* casillas de meta */
+    linear-gradient(#07173a, #07173a) 12.195% 3.297% / 18% 9% no-repeat,
+    linear-gradient(#07173a, #07173a) 50% 3.297% / 18% 9% no-repeat,
+    linear-gradient(#07173a, #07173a) 87.805% 3.297% / 18% 9% no-repeat,
+    /* tortugas del río */
+    radial-gradient(
+        circle at 22% 21%,
+        #1fae6b 0 8px,
+        #7dffc0 8px 9.5px,
+        transparent 10px
+      )
+      0 0 / 100% 100% no-repeat,
+    radial-gradient(
+        circle at 31% 21%,
+        #1fae6b 0 8px,
+        #7dffc0 8px 9.5px,
+        transparent 10px
+      )
+      0 0 / 100% 100% no-repeat,
+    radial-gradient(
+        circle at 76% 21%,
+        #1fae6b 0 8px,
+        #7dffc0 8px 9.5px,
+        transparent 10px
+      )
+      0 0 / 100% 100% no-repeat,
+    /* troncos */ linear-gradient(#6b3f1d, #6b3f1d) 13.333% 29.6% / 40% 7%
+      no-repeat,
+    linear-gradient(#8f5a2c, #8f5a2c) 13.333% 29.6% / 40% 1.5% no-repeat,
+    linear-gradient(#6b3f1d, #6b3f1d) 88.9% 40.3% / 28% 7% no-repeat,
+    linear-gradient(#8f5a2c, #8f5a2c) 88.9% 40.3% / 28% 1.5% no-repeat,
+    /* líneas discontinuas de la carretera */
+    repeating-linear-gradient(
+        90deg,
+        rgba(230, 233, 255, 0.3) 0 14px,
+        transparent 14px 28px
+      )
+      0 72% / 100% 2px no-repeat,
+    repeating-linear-gradient(
+        90deg,
+        rgba(230, 233, 255, 0.3) 0 14px,
+        transparent 14px 28px
+      )
+      0 86% / 100% 2px no-repeat,
+    /* coches */ linear-gradient(var(--magenta), var(--magenta)) 17.95% 66.3% /
+      22% 8% no-repeat,
+    linear-gradient(var(--yellow), var(--yellow)) 77.65% 81.5% / 15% 8%
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 33.7% 96.7% / 11% 8% no-repeat;
+  filter: drop-shadow(0 0 5px rgba(0, 245, 255, 0.3));
+}
+.cover-frogger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* ojos: pupilas y blanco */
+    radial-gradient(
+      circle at calc(50% - 5px) calc(54% - 10px),
+      #08080f 0 2px,
+      transparent 2.5px
+    ),
+    radial-gradient(
+      circle at calc(50% + 5px) calc(54% - 10px),
+      #08080f 0 2px,
+      transparent 2.5px
+    ),
+    radial-gradient(
+      circle at calc(50% - 5px) calc(54% - 9px),
+      #fff 0 4px,
+      transparent 4.5px
+    ),
+    radial-gradient(
+      circle at calc(50% + 5px) calc(54% - 9px),
+      #fff 0 4px,
+      transparent 4.5px
+    ),
+    /* patas */
+    radial-gradient(
+        ellipse 6px 8px at calc(50% - 13px) calc(54% + 8px),
+        var(--green) 0 5px,
+        transparent 6px
+      ),
+    radial-gradient(
+      ellipse 6px 8px at calc(50% + 13px) calc(54% + 8px),
+      var(--green) 0 5px,
+      transparent 6px
+    ),
+    radial-gradient(
+      ellipse 5px 6px at calc(50% - 13px) calc(54% - 8px),
+      var(--green) 0 4px,
+      transparent 5px
+    ),
+    radial-gradient(
+      ellipse 5px 6px at calc(50% + 13px) calc(54% - 8px),
+      var(--green) 0 4px,
+      transparent 5px
+    ),
+    /* cuerpo */
+    radial-gradient(
+        ellipse 12px 15px at 50% 54%,
+        var(--green) 0 11px,
+        transparent 12px
+      ),
+    /* rastro del salto hacia la casilla central */
+    repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 136, 0.75) 0 4px,
+        transparent 4px 10px
+      )
+      50% 14% / 2px 32% no-repeat;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.6));
+}
+
 .cover-duelo {
   background: #0a0a18;
 }

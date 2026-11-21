@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import { createClient } from "../lib/supabase/public";
 import { formatPlays } from "../lib/format";
 import type { Tables } from "../lib/supabase/database.types";
@@ -16,8 +17,6 @@ export type Game = {
   best: number;
   plays: string;
 };
-
-export const CATS = ["TODOS", "ARCADE", "PUZZLE", "SHOOTER", "VERSUS"] as const;
 
 type GameStatsRow = Tables<"games_with_stats">;
 
@@ -38,6 +37,8 @@ function toGame(row: GameStatsRow): Game {
 }
 
 export async function getGames(): Promise<Game[]> {
+  "use cache";
+  cacheLife("seconds");
   const { data, error } = await createClient()
     .from("games_with_stats")
     .select("*")
@@ -48,6 +49,8 @@ export async function getGames(): Promise<Game[]> {
 }
 
 export async function getGame(id: string): Promise<Game | undefined> {
+  "use cache";
+  cacheLife("seconds");
   const { data, error } = await createClient()
     .from("games_with_stats")
     .select("*")

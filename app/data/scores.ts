@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import { createClient } from "../lib/supabase/public";
 import { formatDate } from "../lib/format";
 
@@ -16,6 +17,8 @@ export async function getScores(
   gameId: string,
   count: number,
 ): Promise<ScoreRow[]> {
+  "use cache";
+  cacheLife("seconds");
   const { data, error } = await createClient()
     .from("game_best_scores")
     .select("player_name, score, created_at")

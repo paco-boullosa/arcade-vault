@@ -1,5 +1,6 @@
 import { createArkanoidGame } from "../../games/arkanoid/engine";
 import { createAsteroidsGame } from "../../games/asteroids/engine";
+import { createFroggerGame } from "../../games/frogger/engine";
 import { createSnakeGame } from "../../games/snake/engine";
 import { createTetrisGame } from "../../games/tetris/engine";
 import type { GameEngineFactory } from "./types";
@@ -86,6 +87,22 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
       "← ↑ → ↓ / WASD MOVER · ESPACIO EMPEZAR/REINICIAR · P PAUSA · K SKIN",
     initialLives: 1,
     touch: {
+      dpad: { up: true, down: true, left: true, right: true },
+      a: { code: "Space", label: "EMPEZAR", short: "A" },
+      skin: "KeyK",
+    },
+  },
+  frogger: {
+    factory: createFroggerGame,
+    width: 800,
+    height: 600,
+    controls:
+      "← ↑ → ↓ / WASD SALTAR · ESPACIO EMPEZAR/REINICIAR · P PAUSA · K SKIN",
+    initialLives: 3,
+    touch: {
+      // Un toque = un salto: el motor ignora `e.repeat`, así que la repetición
+      // de la cruz no encadena saltos. Sin B: no hay segunda acción.
+      // S choca con WASD (abajo), por eso la skin es K, como en Snake.
       dpad: { up: true, down: true, left: true, right: true },
       a: { code: "Space", label: "EMPEZAR", short: "A" },
       skin: "KeyK",

@@ -6,20 +6,19 @@ import { useSession } from "./SessionProvider";
 
 export default function AuthForm() {
   const router = useRouter();
-  const { login, signOut } = useSession();
+  const { signOut } = useSession();
   const [tab, setTab] = useState<"in" | "up">("in");
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
   const [email, setEmail] = useState("");
 
+  // El envío real (signUp / signInWithPassword) llega en el paso 7.
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    login({ name: (user || "PLAYER1").toUpperCase().slice(0, 10) });
-    router.push("/");
   };
 
-  const guest = () => {
-    signOut();
+  const guest = async () => {
+    await signOut();
     router.push("/");
   };
 

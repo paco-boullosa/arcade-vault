@@ -4,90 +4,90 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { createClient } from "@/app/lib/supabase/client";
+import { deriveUsername } from "@/app/lib/auth/username";
 
-export type SessionUser = { name: string } | null;
+export type SessionUser = { id: string; name: string } | null;
 
 type SessionActions = {
-  login: (user: { name: string }) => void;
-  signOut: () => void;
+  signOut: () => Promise<void>;
 };
 
-const STORAGE_KEY = "av_user";
+// Clave de la sesión simulada anterior (SPEC 01). Ya no se usa: se elimina.
+const LEGACY_STORAGE_KEY = "av_user";
 
 const SessionContext = createContext<SessionActions | null>(null);
 
-// `av_user` se trata como un store externo. Cada consumidor lo lee con su propio
-// `useSyncExternalStore` (en `useSession`), no desde el contexto: en el servidor
-// y durante la hidratación de ESE componente React usa `getServerSnapshot`
-// (sin sesión) y después pasa al valor real de localStorage. Si el valor viniera
-// del contexto, un componente que se hidrata tarde (bajo <Suspense>) vería ya el
-// usuario y no coincidiría con el HTML del servidor.
+// La sesión de Supabase se trata como un store externo. Cada consumidor lo lee
+// con su propio `useSyncExternalStore` (en `useSession`), no desde el contexto:
+// en el servidor y durante la hidratación de ESE componente React usa
+// `getServerSnapshot` (sin sesión) y después pasa al valor real. Si el valor
+// viniera del contexto, un componente que se hidrata tarde (bajo <Suspense>)
+// vería ya el usuario y no coincidiría con el HTML del servidor.
 const listeners = new Set<() => void>();
+let currentUser: SessionUser = null;
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
-  window.addEventListener("storage", listener);
   return () => {
     listeners.delete(listener);
-    window.removeEventListener("storage", listener);
   };
 }
 
-function notify() {
+// El snapshot debe ser estable: solo se crea un objeto nuevo si cambia el
+// usuario (id o nombre), no en cada refresco de token.
+function getSnapshot(): SessionUser {
+  return currentUser;
+}
+
+function getServerSnapshot(): SessionUser {
+  return null;
+}
+
+function toSessionUser(session: Session | null): SessionUser {
+  const u = session?.user;
+  if (!u) return null;
+  const meta = u.user_metadata ?? {};
+  const name =
+    typeof meta.username === "string" && meta.username !== ""
+      ? meta.username
+      : deriveUsername(meta, u.email);
+  return { id: u.id, name };
+}
+
+function setCurrentUser(next: SessionUser) {
+  if (next?.id === currentUser?.id && next?.name === currentUser?.name) return;
+  currentUser = next;
   listeners.forEach((l) => l());
 }
 
-// El snapshot es el JSON crudo (string | null): un valor primitivo estable.
-function getSnapshot(): string | null {
-  try {
-    return localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function getServerSnapshot(): string | null {
-  return null;
-}
-
-function parseUser(raw: string | null): SessionUser {
-  if (!raw) return null;
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      "name" in parsed &&
-      typeof parsed.name === "string"
-    ) {
-      return { name: parsed.name };
-    }
-  } catch {
-    // JSON inválido: seguimos sin sesión.
-  }
-  return null;
-}
-
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const login = useCallback((next: { name: string }) => {
+  useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
     } catch {}
-    notify();
+
+    const supabase = createClient();
+    // INITIAL_SESSION se emite al suscribirse, así que cubre la lectura de la
+    // sesión inicial. Entre pestañas, supabase-js emite SIGNED_IN/SIGNED_OUT.
+    // El callback solo actualiza el store: no se llama a Supabase desde él.
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUser(toSessionUser(session));
+    });
+    return () => data.subscription.unsubscribe();
   }, []);
 
-  const signOut = useCallback(() => {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {}
-    notify();
+  const signOut = useCallback(async () => {
+    await createClient().auth.signOut();
   }, []);
 
-  const value = useMemo(() => ({ login, signOut }), [login, signOut]);
+  const value = useMemo(() => ({ signOut }), [signOut]);
 
   return (
     <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
@@ -99,7 +99,6 @@ export function useSession(): { user: SessionUser } & SessionActions {
   if (!ctx) {
     throw new Error("useSession debe usarse dentro de <SessionProvider>");
   }
-  const raw = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const user = useMemo(() => parseUser(raw), [raw]);
-  return { user, login: ctx.login, signOut: ctx.signOut };
+  const user = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  return { user, signOut: ctx.signOut };
 }

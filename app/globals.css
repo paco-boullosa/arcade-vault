@@ -791,6 +791,102 @@ a {
   transform: rotate(-24deg);
 }
 
+/* HORIZONTE: la caverna vista desde dentro. Techo y suelo escalonados (columnas
+   como en el juego) se estrechan hacia una rendija donde asoma el horizonte,
+   cálido frente al azul frío de Asteroides. Nave = ::before; ráfaga = ::after. */
+.cover-horizonte {
+  background:
+    /* roca del techo y del suelo */
+    linear-gradient(#032a33, #032a33) 0.000% 0 / 8.333% 20% no-repeat,
+    linear-gradient(#032a33, #032a33) 0.000% 100% / 8.333% 26% no-repeat,
+    linear-gradient(#032a33, #032a33) 9.091% 0 / 8.333% 24% no-repeat,
+    linear-gradient(#032a33, #032a33) 9.091% 100% / 8.333% 22% no-repeat,
+    linear-gradient(#032a33, #032a33) 18.182% 0 / 8.333% 18% no-repeat,
+    linear-gradient(#032a33, #032a33) 18.182% 100% / 8.333% 27% no-repeat,
+    linear-gradient(#032a33, #032a33) 27.273% 0 / 8.333% 15% no-repeat,
+    linear-gradient(#032a33, #032a33) 27.273% 100% / 8.333% 32% no-repeat,
+    linear-gradient(#032a33, #032a33) 36.364% 0 / 8.333% 21% no-repeat,
+    linear-gradient(#032a33, #032a33) 36.364% 100% / 8.333% 27% no-repeat,
+    linear-gradient(#032a33, #032a33) 45.455% 0 / 8.333% 26% no-repeat,
+    linear-gradient(#032a33, #032a33) 45.455% 100% / 8.333% 22% no-repeat,
+    linear-gradient(#032a33, #032a33) 54.545% 0 / 8.333% 30% no-repeat,
+    linear-gradient(#032a33, #032a33) 54.545% 100% / 8.333% 19% no-repeat,
+    linear-gradient(#032a33, #032a33) 63.636% 0 / 8.333% 26% no-repeat,
+    linear-gradient(#032a33, #032a33) 63.636% 100% / 8.333% 23% no-repeat,
+    linear-gradient(#032a33, #032a33) 72.727% 0 / 8.333% 31% no-repeat,
+    linear-gradient(#032a33, #032a33) 72.727% 100% / 8.333% 28% no-repeat,
+    linear-gradient(#032a33, #032a33) 81.818% 0 / 8.333% 34% no-repeat,
+    linear-gradient(#032a33, #032a33) 81.818% 100% / 8.333% 30% no-repeat,
+    linear-gradient(#032a33, #032a33) 90.909% 0 / 8.333% 36% no-repeat,
+    linear-gradient(#032a33, #032a33) 90.909% 100% / 8.333% 32% no-repeat,
+    linear-gradient(#032a33, #032a33) 100.000% 0 / 8.333% 38% no-repeat,
+    linear-gradient(#032a33, #032a33) 100.000% 100% / 8.333% 34% no-repeat,
+    /* filo cian del hueco, 2 px por debajo de la roca */
+    linear-gradient(var(--cyan), var(--cyan)) 0.000% 0 / 8.333% calc(20% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 0.000% 100% / 8.333% calc(26% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 9.091% 0 / 8.333% calc(24% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 9.091% 100% / 8.333% calc(22% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 18.182% 0 / 8.333% calc(18% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 18.182% 100% / 8.333% calc(27% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 27.273% 0 / 8.333% calc(15% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 27.273% 100% / 8.333% calc(32% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 36.364% 0 / 8.333% calc(21% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 36.364% 100% / 8.333% calc(27% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 45.455% 0 / 8.333% calc(26% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 45.455% 100% / 8.333% calc(22% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 54.545% 0 / 8.333% calc(30% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 54.545% 100% / 8.333% calc(19% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 63.636% 0 / 8.333% calc(26% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 63.636% 100% / 8.333% calc(23% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 72.727% 0 / 8.333% calc(31% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 72.727% 100% / 8.333% calc(28% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 81.818% 0 / 8.333% calc(34% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 81.818% 100% / 8.333% calc(30% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 90.909% 0 / 8.333% calc(36% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 90.909% 100% / 8.333% calc(32% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 100.000% 0 / 8.333% calc(38% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 100.000% 100% / 8.333% calc(34% + 2px) no-repeat,
+    /* estela del motor */
+    linear-gradient(90deg, transparent, #ff8a00) 11% 50% / 9% 3px no-repeat,
+    /* horizonte: núcleo blanco, naranja y magenta */
+    radial-gradient(
+      ellipse 30% 34% at 100% 52%,
+      #fff 0 5%,
+      #ffd27a 12%,
+      #ff8a00 28%,
+      #ff2bd6 52%,
+      transparent 100%
+    ),
+    linear-gradient(90deg, transparent 45%, rgba(255, 43, 214, 0.55)) 0 52% /
+      100% 1px no-repeat,
+    linear-gradient(90deg, #02060c, #05161d 65%, #1a0a24);
+}
+.cover-horizonte::before {
+  content: "";
+  position: absolute;
+  left: 20%;
+  top: 50%;
+  width: 15%;
+  aspect-ratio: 2 / 1;
+  background: #fff;
+  clip-path: polygon(100% 50%, 0 0, 24% 50%, 0 100%);
+  transform: translateY(-50%);
+}
+.cover-horizonte::after {
+  content: "";
+  position: absolute;
+  left: 38%;
+  top: calc(50% - 1px);
+  width: 34%;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--cyan) 0 10px,
+    transparent 10px 18px
+  );
+  filter: drop-shadow(0 0 4px var(--cyan));
+}
+
 /* TETRIS: un pozo con el hueco de cuatro filas esperando a la I, con su pieza
    fantasma ya marcada abajo. Pozo = ::before; pieza y fantasma = ::after. */
 .cover-tetris {

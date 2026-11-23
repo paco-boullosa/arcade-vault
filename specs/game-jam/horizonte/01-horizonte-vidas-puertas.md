@@ -1,6 +1,6 @@
 # GAME JAM — HORIZONTE · Variante A: Vidas y puertas de sector
 
-> **Status:** Draft
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06, SPEC 07
 > **Date:** 2026-11-23
 > **Objective:** Crear `horizonte`, un shoot'em up de scroll lateral por una caverna con techo y suelo, oleadas de enemigos con patrones fijos y una puerta destructible al final de cada sector, con 3 vidas, como motor TypeScript con canvas único 800×600 y ranking en Supabase.

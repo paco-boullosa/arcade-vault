@@ -797,8 +797,8 @@ a {
 .cover-horizonte {
   background:
     /* roca del techo y del suelo */
-    linear-gradient(#032a33, #032a33) 0.000% 0 / 8.333% 20% no-repeat,
-    linear-gradient(#032a33, #032a33) 0.000% 100% / 8.333% 26% no-repeat,
+    linear-gradient(#032a33, #032a33) 0% 0 / 8.333% 20% no-repeat,
+    linear-gradient(#032a33, #032a33) 0% 100% / 8.333% 26% no-repeat,
     linear-gradient(#032a33, #032a33) 9.091% 0 / 8.333% 24% no-repeat,
     linear-gradient(#032a33, #032a33) 9.091% 100% / 8.333% 22% no-repeat,
     linear-gradient(#032a33, #032a33) 18.182% 0 / 8.333% 18% no-repeat,
@@ -819,44 +819,68 @@ a {
     linear-gradient(#032a33, #032a33) 81.818% 100% / 8.333% 30% no-repeat,
     linear-gradient(#032a33, #032a33) 90.909% 0 / 8.333% 36% no-repeat,
     linear-gradient(#032a33, #032a33) 90.909% 100% / 8.333% 32% no-repeat,
-    linear-gradient(#032a33, #032a33) 100.000% 0 / 8.333% 38% no-repeat,
-    linear-gradient(#032a33, #032a33) 100.000% 100% / 8.333% 34% no-repeat,
+    linear-gradient(#032a33, #032a33) 100% 0 / 8.333% 38% no-repeat,
+    linear-gradient(#032a33, #032a33) 100% 100% / 8.333% 34% no-repeat,
     /* filo cian del hueco, 2 px por debajo de la roca */
-    linear-gradient(var(--cyan), var(--cyan)) 0.000% 0 / 8.333% calc(20% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 0.000% 100% / 8.333% calc(26% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 9.091% 0 / 8.333% calc(24% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 9.091% 100% / 8.333% calc(22% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 18.182% 0 / 8.333% calc(18% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 18.182% 100% / 8.333% calc(27% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 27.273% 0 / 8.333% calc(15% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 27.273% 100% / 8.333% calc(32% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 36.364% 0 / 8.333% calc(21% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 36.364% 100% / 8.333% calc(27% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 45.455% 0 / 8.333% calc(26% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 45.455% 100% / 8.333% calc(22% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 54.545% 0 / 8.333% calc(30% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 54.545% 100% / 8.333% calc(19% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 63.636% 0 / 8.333% calc(26% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 63.636% 100% / 8.333% calc(23% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 72.727% 0 / 8.333% calc(31% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 72.727% 100% / 8.333% calc(28% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 81.818% 0 / 8.333% calc(34% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 81.818% 100% / 8.333% calc(30% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 90.909% 0 / 8.333% calc(36% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 90.909% 100% / 8.333% calc(32% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 100.000% 0 / 8.333% calc(38% + 2px) no-repeat,
-    linear-gradient(var(--cyan), var(--cyan)) 100.000% 100% / 8.333% calc(34% + 2px) no-repeat,
-    /* estela del motor */
-    linear-gradient(90deg, transparent, #ff8a00) 11% 50% / 9% 3px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 0% 0 / 8.333% calc(20% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 0% 100% / 8.333% calc(26% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 9.091% 0 / 8.333% calc(24% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 9.091% 100% / 8.333%
+      calc(22% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 18.182% 0 / 8.333% calc(18% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 18.182% 100% / 8.333%
+      calc(27% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 27.273% 0 / 8.333% calc(15% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 27.273% 100% / 8.333%
+      calc(32% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 36.364% 0 / 8.333% calc(21% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 36.364% 100% / 8.333%
+      calc(27% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 45.455% 0 / 8.333% calc(26% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 45.455% 100% / 8.333%
+      calc(22% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 54.545% 0 / 8.333% calc(30% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 54.545% 100% / 8.333%
+      calc(19% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 63.636% 0 / 8.333% calc(26% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 63.636% 100% / 8.333%
+      calc(23% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 72.727% 0 / 8.333% calc(31% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 72.727% 100% / 8.333%
+      calc(28% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 81.818% 0 / 8.333% calc(34% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 81.818% 100% / 8.333%
+      calc(30% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 90.909% 0 / 8.333% calc(36% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 90.909% 100% / 8.333%
+      calc(32% + 2px) no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 100% 0 / 8.333% calc(38% + 2px)
+      no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 100% 100% / 8.333% calc(34% + 2px)
+      no-repeat,
+    /* estela del motor */ linear-gradient(90deg, transparent, #ff8a00) 11%
+      50% / 9% 3px no-repeat,
     /* horizonte: núcleo blanco, naranja y magenta */
     radial-gradient(
-      ellipse 30% 34% at 100% 52%,
-      #fff 0 5%,
-      #ffd27a 12%,
-      #ff8a00 28%,
-      #ff2bd6 52%,
-      transparent 100%
-    ),
+        ellipse 30% 34% at 100% 52%,
+        #fff 0 5%,
+        #ffd27a 12%,
+        #ff8a00 28%,
+        #ff2bd6 52%,
+        transparent 100%
+      ),
     linear-gradient(90deg, transparent 45%, rgba(255, 43, 214, 0.55)) 0 52% /
       100% 1px no-repeat,
     linear-gradient(90deg, #02060c, #05161d 65%, #1a0a24);
@@ -1126,6 +1150,64 @@ a {
     ),
     radial-gradient(circle at 50% 55%, var(--green) 0 14px, transparent 15px);
   filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
+}
+
+/* BANDERAS: planta del laberinto en verde apagado y, encima, un mástil con la
+   bandera a medio izar. Bandera y poste = ::before; coche con faros = ::after. */
+.cover-banderas {
+  background:
+    linear-gradient(#1c7a47, #1c7a47) 0% 0% / 100% 5% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 0% 100% / 100% 5% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 0% 0% / 3.5% 100% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 100% 0% / 3.5% 100% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 17.14% 18.95% / 30% 5% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 12.44% 26.47% / 3.5% 32% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 55.96% 0% / 3.5% 30% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 82.93% 21.05% / 18% 5% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 85.49% 30.3% / 3.5% 34% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 16.22% 69.47% / 26% 5% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 35.75% 82.5% / 3.5% 20% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 100% 75.79% / 32% 5% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 70.47% 69.33% / 3.5% 25% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 27.5% 37.89% / 20% 5% no-repeat,
+    linear-gradient(#1c7a47, #1c7a47) 17.78% 86.32% / 10% 5% no-repeat,
+    radial-gradient(ellipse at 50% 45%, #12402a 0%, #07150e 75%);
+}
+.cover-banderas::before {
+  content: "";
+  position: absolute;
+  left: 47%;
+  top: 14%;
+  width: 26%;
+  height: 74%;
+  background:
+    linear-gradient(#fff, #fff) 0 0 / 4px 100% no-repeat,
+    linear-gradient(var(--yellow), var(--yellow)) 4px 18% / 100% 34% no-repeat;
+  clip-path: polygon(
+    0 0,
+    4px 0,
+    4px 12%,
+    100% 12%,
+    78% 29%,
+    100% 46%,
+    4px 46%,
+    4px 100%,
+    0 100%
+  );
+}
+.cover-banderas::after {
+  content: "";
+  position: absolute;
+  left: 42%;
+  bottom: 10%;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--green);
+  border-radius: 5px;
+  background:
+    linear-gradient(#07150e, #07150e) 50% 45% / 12px 4px no-repeat,
+    #fff;
+  box-shadow: 0 0 10px var(--green);
 }
 
 /* FROGGER: corte del tablero (meta, río, mediana, carretera). La rana espera en

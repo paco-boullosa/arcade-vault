@@ -1,6 +1,7 @@
 import { createArkanoidGame } from "../../games/arkanoid/engine";
 import { createAsteroidsGame } from "../../games/asteroids/engine";
 import { createFroggerGame } from "../../games/frogger/engine";
+import { createHorizonteGame } from "../../games/horizonte/engine";
 import { createSnakeGame } from "../../games/snake/engine";
 import { createTetrisGame } from "../../games/tetris/engine";
 import type { GameEngineFactory } from "./types";
@@ -105,6 +106,22 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
       // S choca con WASD (abajo), por eso la skin es K, como en Snake.
       dpad: { up: true, down: true, left: true, right: true },
       a: { code: "Space", label: "EMPEZAR", short: "A" },
+      skin: "KeyK",
+    },
+  },
+  horizonte: {
+    factory: createHorizonteGame,
+    width: 800,
+    height: 600,
+    controls:
+      "← ↑ → ↓ / WASD MOVER · ESPACIO DISPARAR/REINICIAR · P PAUSA · K SKIN",
+    initialLives: 3,
+    touch: {
+      // Movimiento libre en 8 direcciones: la cruz mantiene la tecla (el motor
+      // la lee con keydown/keyup y descarta las repeticiones). Dos direcciones a la
+      // vez (multitáctil) dan diagonales. A mantenido = disparo automático.
+      dpad: { up: true, down: true, left: true, right: true },
+      a: { code: "Space", label: "DISPARAR", short: "DIS" },
       skin: "KeyK",
     },
   },

@@ -1,6 +1,6 @@
 # SPEC 13 — Registro, login y autenticación con Supabase Auth
 
-> **Status:** Aprobado
+> **Status:** Implementada
 > **Depends on:** SPEC 01, SPEC 04, SPEC 06
 > **Date:** 2026-11-23
 > **Objective:** Sustituir la sesión simulada en `localStorage` por autenticación real con Supabase Auth (registro y login con email y contraseña, Google y GitHub, confirmación de correo obligatoria, recuperación de contraseña y cierre de sesión), de modo que las puntuaciones guardadas con sesión queden ligadas a la cuenta mediante un `scores.user_id` opcional.

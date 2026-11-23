@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Arcade Vault: an online platform to play retro games in the browser and compete for the highest score. UI text is in Spanish.
 
-Spec Driven Design: every feature starts as a spec in `specs/NN-slug.md` (`Draft` → `Aprobado` → `Implementado`), written with `/spec` and implemented with `/spec-impl`. `specs/.spec-config.yml` sets `AutoCreateBranch: true` (branch `spec-NN-slug`) and `AutoCommitSteps: false`. Specs 01–12 exist (all `Implementado`); ideas in draft from game jams live in `specs/game-jam/<game-id>/`; read the relevant one before changing a feature. Never mark a spec `Aprobado` yourself.
+Spec Driven Design: every feature starts as a spec in `specs/NN-slug.md` (`Draft` → `Aprobado` → `Implementado`), written with `/spec` and implemented with `/spec-impl`. `specs/.spec-config.yml` sets `AutoCreateBranch: true` (branch `spec-NN-slug`) and `AutoCommitSteps: false`. Specs 01–13 exist (01–12 `Implementado`; check 13's status in the file); ideas in draft from game jams live in `specs/game-jam/<game-id>/`; read the relevant one before changing a feature. Never mark a spec `Aprobado` yourself.
 
 No test runner is configured. Verify with `npx tsc --noEmit`, `npm run lint` and the running app.
 
@@ -41,15 +41,15 @@ Definitions in `.claude/agents/<name>.md` (read the file for role, tools and rul
 
 ## Architecture
 
-- Routes (`app/`): `/` Home, `/games` library, `/games/[id]` detail + top 10, `/games/[id]/play` player, `/hall-of-fame`, `/about` (contact form via Resend server action in `app/about/actions.ts`), `/auth`.
+- Routes (`app/`): `/` Home, `/games` library, `/games/[id]` detail + top 10, `/games/[id]/play` player, `/hall-of-fame`, `/about` (contact form via Resend server action in `app/about/actions.ts`), `/auth` (login/registro/recuperación, reads `?next=` and `?error=`), `/auth/callback` (route handler: PKCE `exchangeCodeForSession` for email confirmation, OAuth and password recovery), `/auth/reset`.
 - Pages are thin server components; UI lives in `app/components/*View.tsx`. Data access lives in `app/data/` (`games.ts`, `scores.ts`, `activity.ts`) and `app/lib/scores.ts`; async data is wrapped in `<Suspense>` (required by `cacheComponents`).
-- Session is local only: `SessionProvider` stores `{ name }` in `localStorage` (`av_user`) via `useSyncExternalStore`. There is no Supabase Auth yet; the player name is used when saving scores.
+- Session is Supabase Auth (SPEC 13): email + password, Google and GitHub, email confirmation required, password recovery. `SessionProvider` (`app/components/SessionProvider.tsx`) subscribes to `onAuthStateChange` and exposes `useSession()` → `{ user: { id, name } | null, signOut }` through `useSyncExternalStore` with a signed-out `getServerSnapshot` (do not read the user from the context or the server in the layout: it breaks hydration under `<Suspense>` / `cacheComponents`). The player name is `user_metadata.username` (uppercase, `USERNAME_RE`), with `deriveUsername` as fallback; there is no `profiles` table and names are not unique. Helpers in `app/lib/auth/` (`username.ts`, `redirect.ts` with `safeNext` for `?next=`, `errors.ts` for Spanish error texts). Guest mode stays: saving a score never requires an account.
 - Design reference: `references/templates/` (original JSX/HTML mockups and `styles.css`). Styles are global classes in `app/globals.css`, including one `.cover-<id>` CSS cover per game.
 
 ### Supabase
 
 - Clients in `app/lib/supabase/`: `server.ts` (per request, cookies), `client.ts` (browser), `public.ts` (read-only, no cookies: usable in `generateStaticParams` and outside requests), `proxy.ts` (`updateSession`, called from root `proxy.ts`, which replaces `middleware.ts` in this Next.js version).
-- Schema: tables `games` and `scores` (RLS: public select, public insert on `scores`), views `games_with_stats`, `game_best_scores`, `top_players`. `best`/`plays` always come from `scores`, never hardcoded. View columns are typed `| null`; narrow them as `app/data/games.ts` does.
+- Schema: tables `games` and `scores` (RLS: public select; insert policy `scores_insert_own_or_guest`: `user_id is null or user_id = auth.uid()`; `scores.user_id` is optional and references `auth.users` with `on delete set null`; views do not expose it), views `games_with_stats`, `game_best_scores`, `top_players`. `best`/`plays` always come from `scores`, never hardcoded. View columns are typed `| null`; narrow them as `app/data/games.ts` does.
 - `database.types.ts` is generated; regenerate it (Supabase MCP) after schema changes.
 - Always add a new migration in `supabase/migrations/`; never edit an applied one. Never use `service_role` in code.
 

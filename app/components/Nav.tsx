@@ -16,6 +16,10 @@ export default function Nav() {
   const aboutActive = pathname.startsWith("/about");
   const authActive = pathname.startsWith("/auth");
   const close = () => setOpen(false);
+  // Tras entrar se vuelve a la página actual (en /auth no tiene sentido).
+  const authHref = authActive
+    ? "/auth"
+    : `/auth?next=${encodeURIComponent(pathname)}`;
 
   return (
     <>
@@ -46,11 +50,20 @@ export default function Nav() {
           <span>CRÉDITOS · 03</span>
         </div>
         {user ? (
-          <button className="btn ghost auth-btn" onClick={signOut}>
-            {user.name} ▾
-          </button>
+          <>
+            <span className="user-tag" title="Sesión iniciada">
+              {user.name}
+            </span>
+            <button
+              type="button"
+              className="btn ghost auth-btn"
+              onClick={() => void signOut()}
+            >
+              SALIR
+            </button>
+          </>
         ) : (
-          <Link href="/auth" className="btn auth-btn">
+          <Link href={authHref} className="btn auth-btn">
             Iniciar Sesión
           </Link>
         )}
@@ -74,11 +87,7 @@ export default function Nav() {
         >
           MENÚ
         </div>
-        <Link
-          href="/"
-          className={homeActive ? "active" : ""}
-          onClick={close}
-        >
+        <Link href="/" className={homeActive ? "active" : ""} onClick={close}>
           Inicio
         </Link>
         <Link
@@ -102,13 +111,29 @@ export default function Nav() {
         >
           Acerca de
         </Link>
-        <Link
-          href="/auth"
-          className={authActive ? "active" : ""}
-          onClick={close}
-        >
-          {user ? "Cuenta" : "Iniciar Sesión"}
-        </Link>
+        {user ? (
+          <>
+            <div className="panel-user">{user.name}</div>
+            <button
+              type="button"
+              className="btn ghost panel-signout"
+              onClick={() => {
+                close();
+                void signOut();
+              }}
+            >
+              SALIR
+            </button>
+          </>
+        ) : (
+          <Link
+            href={authHref}
+            className={authActive ? "active" : ""}
+            onClick={close}
+          >
+            Iniciar Sesión
+          </Link>
+        )}
         <div style={{ flex: 1 }}></div>
         <div
           className="pixel"

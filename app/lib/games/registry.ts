@@ -1,5 +1,6 @@
 import { createArkanoidGame } from "../../games/arkanoid/engine";
 import { createAsteroidsGame } from "../../games/asteroids/engine";
+import { createBanderasGame } from "../../games/banderas/engine";
 import { createFroggerGame } from "../../games/frogger/engine";
 import { createHorizonteGame } from "../../games/horizonte/engine";
 import { createSnakeGame } from "../../games/snake/engine";
@@ -122,6 +123,22 @@ export const ENGINES: Partial<Record<string, GameDefinition>> = {
       // vez (multitáctil) dan diagonales. A mantenido = disparo automático.
       dpad: { up: true, down: true, left: true, right: true },
       a: { code: "Space", label: "DISPARAR", short: "DIS" },
+      skin: "KeyK",
+    },
+  },
+  banderas: {
+    factory: createBanderasGame,
+    width: 800,
+    height: 600,
+    controls:
+      "← ↑ → ↓ / WASD CONDUCIR · ESPACIO EMPEZAR/REINICIAR · P PAUSA · K SKIN",
+    initialLives: 3,
+    touch: {
+      // El coche se conduce manteniendo la cruz (el motor guarda las teclas
+      // pulsadas y manda la última; ignora `repeat`). Espacio solo arranca o
+      // reinicia, sin B ni extras. K cambia la skin (S es "abajo" en WASD).
+      dpad: { up: true, down: true, left: true, right: true },
+      a: { code: "Space", label: "EMPEZAR", short: "A" },
       skin: "KeyK",
     },
   },

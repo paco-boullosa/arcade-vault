@@ -8,3 +8,4 @@
 - Juegos portados por este agente: ver enlaces. Añadir aquí juego → mapeo, CSS propio, ampliaciones y su porqué.
 - [frogger](frogger.md) — cruz completa, A EMPEZAR, skin K; sin CSS propio; Playwright MCP no emula táctil (truco de la media query)
 - [horizonte](horizonte.md) — cruz completa, A DISPARAR mantenido, skin K; sin CSS ni ampliaciones del mando
+- [banderas](banderas.md) — cruz completa mantenida, A EMPEZAR, skin K; sin CSS ni ampliaciones del mando

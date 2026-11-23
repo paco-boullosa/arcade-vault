@@ -4,7 +4,8 @@ import { formatPlays } from "../lib/format";
 import type { Tables } from "../lib/supabase/database.types";
 
 export type GameColor = "cyan" | "magenta" | "yellow" | "green";
-export type GameCategory = "ARCADE" | "PUZZLE" | "SHOOTER" | "VERSUS";
+export type GameCategory =
+  "ARCADE" | "PUZZLE" | "SHOOTER" | "VERSUS" | "LABERINTO";
 
 export type Game = {
   id: string;

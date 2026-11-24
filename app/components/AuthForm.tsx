@@ -7,9 +7,13 @@ import { authErrorMessage } from "@/app/lib/auth/errors";
 import { safeNext } from "@/app/lib/auth/redirect";
 import { isValidUsername } from "@/app/lib/auth/username";
 import { useSession } from "./SessionProvider";
+import {
+  isValidPassword,
+  PASSWORD_RULE_MESSAGE,
+} from "@/app/lib/auth/password";
 import Field from "./AuthField";
+import PasswordRules, { passwordRulesId } from "./PasswordRules";
 
-const MIN_PASSWORD = 8;
 const RESEND_COOLDOWN = 60;
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
@@ -103,8 +107,8 @@ export default function AuthForm() {
     if (!EMAIL_RE.test(email.trim())) {
       errors.email = "Escribe un correo válido";
     }
-    if (pass.length < MIN_PASSWORD) {
-      errors.password = `Mínimo ${MIN_PASSWORD} caracteres`;
+    if (!isValidPassword(pass)) {
+      errors.password = PASSWORD_RULE_MESSAGE;
     }
     return errors;
   };
@@ -115,7 +119,7 @@ export default function AuthForm() {
     setFormError(null);
     setNotice(null);
 
-    // En el login una contraseña corta no se valida: la decide Supabase.
+    // En el login la contraseña no se valida: la decide Supabase.
     const errors = validate();
     if (tab === "in") delete errors.password;
     setFieldErrors(errors);
@@ -440,8 +444,12 @@ export default function AuthForm() {
                 autoComplete={
                   tab === "in" ? "current-password" : "new-password"
                 }
+                describedBy={
+                  tab === "up" ? passwordRulesId("auth-pass") : undefined
+                }
                 error={fieldErrors.password}
               />
+              {tab === "up" && <PasswordRules id="auth-pass" value={pass} />}
 
               {tab === "in" && (
                 <button

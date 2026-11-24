@@ -38,6 +38,7 @@ Definitions in `.claude/agents/<name>.md` (read the file for role, tools and rul
 - `game-jam`
 - `skin-designer`
 - `mobile-porter`
+- `security-auditor` (read-only audit of the database and the app against the SPEC 13/14 baseline; logs each run in `references/security/audit-log.md` and proposes fixes, never applies them)
 
 ## Architecture
 
@@ -61,6 +62,7 @@ Definitions in `.claude/agents/<name>.md` (read the file for role, tools and rul
 - Advisor exception: `auth_leaked_password_protection` stays as the only security warning. It needs the Pro plan; the project is on Free (checked 2026-11-24). Enable it in the panel if the plan changes.
 - Sign-up/sign-in rate limit: Supabase's own, set to 5 per 5 minutes per IP in the panel (one shared limit, so it also limits logins from a shared network). No CAPTCHA. The panel is not verifiable from the repo.
 - Run `get_advisors` (security) at the end of every spec that touches the schema: default privileges still give `EXECUTE` to `PUBLIC` on new functions.
+- Run the `security-auditor` agent at the end of every spec that touches the schema, auth, routes or `next.config.ts`, and after adding migrations. It checks RLS, policies, grants, `SECURITY DEFINER` functions, advisors, headers, redirects and secrets, and appends to `references/security/audit-log.md`. Accepted exceptions live in `.claude/agent-memory/security-auditor/MEMORY.md`.
 
 ### Games
 

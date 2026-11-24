@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Arcade Vault: an online platform to play retro games in the browser and compete for the highest score. UI text is in Spanish.
 
-Spec Driven Design: every feature starts as a spec in `specs/NN-slug.md` (`Draft` → `Aprobado` → `Implementado`), written with `/spec` and implemented with `/spec-impl`. `specs/.spec-config.yml` sets `AutoCreateBranch: true` (branch `spec-NN-slug`) and `AutoCommitSteps: false`. Specs 01–09 exist; read the relevant one before changing a feature. Never mark a spec `Aprobado` yourself.
+Spec Driven Design: every feature starts as a spec in `specs/NN-slug.md` (`Draft` → `Aprobado` → `Implementado`), written with `/spec` and implemented with `/spec-impl`. `specs/.spec-config.yml` sets `AutoCreateBranch: true` (branch `spec-NN-slug`) and `AutoCommitSteps: false`. Specs 01–13 exist (01–12 `Implementado`; check 13's status in the file); ideas in draft from game jams live in `specs/game-jam/<game-id>/`; read the relevant one before changing a feature. Never mark a spec `Aprobado` yourself.
 
 No test runner is configured. Verify with `npx tsc --noEmit`, `npm run lint` and the running app.
 
@@ -26,37 +26,39 @@ Env vars: see `.env.example` (`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FRO
 
 - Usa siempre /frontend-design para diseñar la interfaz de usuario.
 - `/nuevo-juego` (`.claude/skills/nuevo-juego/`): workflow to port a game from `references/started-games/` or create a new one, wired to the leaderboard. Spec first (Draft, wait for approval), then engine, registry, cover, `games` row and verification. Its `references/` (engine contract, platform integration, spec template, verification) are the source of truth for adding games.
-- `/spec-impl-game` (`.claude/skills/spec-impl-game/`): same as the global `/spec-impl` (approved spec → branch → step-by-step implementation) and, when the last step is done, runs the `skin-designer` and then the `mobile-porter` agents on the spec's game, strictly one after the other (both edit `ENGINES.<id>`). Use it for game specs; use `/spec-impl` for the rest.
+- `/spec-impl-game` (`.claude/skills/spec-impl-game/`, user-invoked only): same as the global `/spec-impl` (approved spec → branch → step-by-step implementation) and, when the last step is done, runs the `skin-designer` and then the `mobile-porter` agents on the spec's game, strictly one after the other (both edit `ENGINES.<id>`). Use it for game specs; use `/spec-impl` for the rest.
 - PostToolUse hook (`.claude/hooks/format-and-lint.sh`): runs Prettier and `eslint --fix` on every file written or edited (skips `node_modules`, `.next`, `references`). An ESLint error blocks the edit, so fix it rather than ignore it.
 - `.mcp.json` configures the Supabase MCP server for this project (migrations, SQL, type generation, advisors).
 
 ## Agents
 
-- `game-planner` agent (`.claude/agents/game-planner.md`): decides which game fits the platform before `/nuevo-juego`. Logs every proposal (including other people's suggestions) in `references/game-planner-todo.md` and keeps project memory in `.claude/agent-memory/game-planner/`. It never writes code or specs.
-- `game-jam` agent (`.claude/agents/game-jam.md`): given a theme, designs one original game and writes at least two complete spec variants (A/B, format of SPEC 07–09, `Status: Draft`) in `specs/game-jam/<game-id>/` plus a `README.md` to compare them. Reads (never edits) the `game-planner` TODO and the catalog to avoid duplicates; no code, no commits. The chosen variant is renumbered into `specs/` via `/nuevo-juego`. Memory in `.claude/agent-memory/game-jam/`.
-- `skin-designer` agent (`.claude/agents/skin-designer.md`): given a game id, audits whether it has at least the skins classic (default, the current look), retro and neon, and implements the missing ones directly in `app/games/<id>/skins.ts`, following `app/games/tetris/skins.ts` (key selector, `<id>.skin` in `localStorage`, name shown on canvas, `controls` updated in the registry). Checks contrast against dark backgrounds (WCAG 3:1 / 4.5:1). Touches only that game's folder and its `controls` entry; no specs, migrations or commits. Memory in `.claude/agent-memory/skin-designer/`.
-- `mobile-porter` agent (`.claude/agents/mobile-porter.md`): given a game id with a real engine, applies its mobile version following SPEC 10 (touch controls, `max-width: 640px` + `pointer: coarse`): sets its `touch` entry in `ENGINES` (`app/lib/games/registry.ts`), adds per-game mobile CSS in `app/globals.css` (selector `.av-player--engine[data-game="<id>"]`) and, if needed, extends `TouchControls`/`touch.ts` with optional fields. Verifies at 390×844 and 360×740 with Playwright plus 1280 px for desktop and a regression pass on the other engines. Never touches engines (`app/games/*`), specs or Supabase; no commits. Memory in `.claude/agent-memory/mobile-porter/`.
+Definitions in `.claude/agents/<name>.md` (read the file for role, tools and rules); each keeps memory in `.claude/agent-memory/<name>/`.
+
+- `game-planner`
+- `game-jam`
+- `skin-designer`
+- `mobile-porter`
 
 ## Architecture
 
-- Routes (`app/`): `/` Home, `/games` library, `/games/[id]` detail + top 10, `/games/[id]/play` player, `/hall-of-fame`, `/about` (contact form via Resend server action in `app/about/actions.ts`), `/auth`.
+- Routes (`app/`): `/` Home, `/games` library, `/games/[id]` detail + top 10, `/games/[id]/play` player, `/hall-of-fame`, `/about` (contact form via Resend server action in `app/about/actions.ts`), `/auth` (login/registro/recuperación, reads `?next=` and `?error=`), `/auth/callback` (route handler: PKCE `exchangeCodeForSession` for email confirmation, OAuth and password recovery), `/auth/reset`.
 - Pages are thin server components; UI lives in `app/components/*View.tsx`. Data access lives in `app/data/` (`games.ts`, `scores.ts`, `activity.ts`) and `app/lib/scores.ts`; async data is wrapped in `<Suspense>` (required by `cacheComponents`).
-- Session is local only: `SessionProvider` stores `{ name }` in `localStorage` (`av_user`) via `useSyncExternalStore`. There is no Supabase Auth yet; the player name is used when saving scores.
+- Session is Supabase Auth (SPEC 13): email + password, Google and GitHub, email confirmation required, password recovery. `SessionProvider` (`app/components/SessionProvider.tsx`) subscribes to `onAuthStateChange` and exposes `useSession()` → `{ user: { id, name } | null, signOut }` through `useSyncExternalStore` with a signed-out `getServerSnapshot` (do not read the user from the context or the server in the layout: it breaks hydration under `<Suspense>` / `cacheComponents`). The player name is `user_metadata.username` (uppercase, `USERNAME_RE`), with `deriveUsername` as fallback; there is no `profiles` table and names are not unique. Helpers in `app/lib/auth/` (`username.ts`, `redirect.ts` with `safeNext` for `?next=`, `errors.ts` for Spanish error texts). Guest mode stays: saving a score never requires an account.
 - Design reference: `references/templates/` (original JSX/HTML mockups and `styles.css`). Styles are global classes in `app/globals.css`, including one `.cover-<id>` CSS cover per game.
 
 ### Supabase
 
 - Clients in `app/lib/supabase/`: `server.ts` (per request, cookies), `client.ts` (browser), `public.ts` (read-only, no cookies: usable in `generateStaticParams` and outside requests), `proxy.ts` (`updateSession`, called from root `proxy.ts`, which replaces `middleware.ts` in this Next.js version).
-- Schema: tables `games` and `scores` (RLS: public select, public insert on `scores`), views `games_with_stats`, `game_best_scores`, `top_players`. `best`/`plays` always come from `scores`, never hardcoded. View columns are typed `| null`; narrow them as `app/data/games.ts` does.
+- Schema: tables `games` and `scores` (RLS: public select; insert policy `scores_insert_own_or_guest`: `user_id is null or user_id = auth.uid()`; `scores.user_id` is optional and references `auth.users` with `on delete set null`; views do not expose it), views `games_with_stats`, `game_best_scores`, `top_players`. `best`/`plays` always come from `scores`, never hardcoded. View columns are typed `| null`; narrow them as `app/data/games.ts` does.
 - `database.types.ts` is generated; regenerate it (Supabase MCP) after schema changes.
 - Always add a new migration in `supabase/migrations/`; never edit an applied one. Never use `service_role` in code.
 
 ### Games
 
 - Engine contract in `app/lib/games/types.ts` (`GameEngineFactory`, `GameStats`, events). Real engines are registered by id in `app/lib/games/registry.ts` (`ENGINES`): `asteroids`, `tetris`, `arkanoid`, `snake`, each in `app/games/<id>/` as plain TypeScript (no React, no global state, single canvas 800×600).
-- `GameCanvas` mounts/destroys the engine; `GamePlayer` renders the HTML HUD, pause/game over and the save-score modal. Saving is offered only when `ENGINES[game.id]` exists; other catalog games (`gloton`, `invasores`, `ranaria`, `duelo-pixel`) still run the fake simulation.
+- `GameCanvas` mounts/destroys the engine; `GamePlayer` renders the HTML HUD, pause/game over and the save-score modal. Saving is offered only when `ENGINES[game.id]` exists; other catalog games (`gloton`, `invasores`, `ranaria`, `duelo-pixel`; `ranaria` is distinct from `frogger`) still run the fake simulation.
 - The simulated duplicates `bloque-buster`, `caida`, `serpentina`, `rocas` were removed (migration `20261119140000_remove_simulated_games.sql`, plus their CSS covers).
-- Full catalog of games: `references/implemented-games.md`.
+- Catalog of games: `references/implemented-games.md` (outdated: it only lists the first four engines; the `games` table is the source of truth).
 - To add a game, use `/nuevo-juego`; follow its rules (destroy cancels rAF and listeners, `onStats` only on change, `onGameOver` once, keyboard on `window` ignoring form fields).
 
 ## Stack and gotchas

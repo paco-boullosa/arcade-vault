@@ -32,15 +32,15 @@ export default function GamePlayer({ game }: { game: Game }) {
   const [score, setScore] = useState(0);
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
-  // `null` = sin editar: se muestra el usuario de la sesión (que se resuelve
-  // tras montar) o INVITADO.
+  // Solo para invitados: `null` = sin editar (INVITADO). Con sesión el nombre
+  // es el de la cuenta y no se edita.
   const [nameDraft, setNameDraft] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   // Evita que un doble clic envíe dos inserts antes de que se pinte `saving`.
   const savingRef = useRef(false);
 
-  const name = nameDraft ?? user?.name ?? "INVITADO";
+  const name = user ? user.name : (nameDraft ?? "INVITADO");
   const level = factory
     ? engineLevel
     : 1 + Math.floor(score / POINTS_PER_LEVEL);
@@ -108,6 +108,9 @@ export default function GamePlayer({ game }: { game: Game }) {
       game_id: game.id,
       player_name: trimmedName,
       score,
+      // Con sesión la puntuación queda ligada a la cuenta. La RLS solo admite
+      // el propio `user_id`; el invitado guarda con `user_id` nulo.
+      user_id: user?.id ?? null,
     };
     try {
       const { error } = await createClient().from("scores").insert(row);
@@ -282,6 +285,10 @@ export default function GamePlayer({ game }: { game: Game }) {
                   <input
                     value={name}
                     maxLength={16}
+                    readOnly={!!user}
+                    aria-label={
+                      user ? "Nombre de tu cuenta" : "Nombre del jugador"
+                    }
                     onChange={(e) =>
                       setNameDraft(e.target.value.toUpperCase().slice(0, 16))
                     }

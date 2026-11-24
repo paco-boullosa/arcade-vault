@@ -1,9 +1,11 @@
+import { PASSWORD_RULE_MESSAGE } from "./password";
+
 // Textos de error en español, por `error.code` de Supabase Auth.
 // `callback` es el código propio que usa /auth/callback en `/auth?error=...`.
 const MESSAGES: Record<string, string> = {
   invalid_credentials: "Correo o contraseña incorrectos",
   email_not_confirmed: "Confirma tu correo antes de entrar",
-  weak_password: "La contraseña es demasiado débil",
+  weak_password: PASSWORD_RULE_MESSAGE,
   over_email_send_rate_limit:
     "Demasiados correos enviados, espera unos minutos",
   provider_disabled: "Este método de acceso no está disponible",

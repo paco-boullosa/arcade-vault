@@ -4,9 +4,12 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { createClient } from "@/app/lib/supabase/client";
 import { authErrorMessage } from "@/app/lib/auth/errors";
+import {
+  isValidPassword,
+  PASSWORD_RULE_MESSAGE,
+} from "@/app/lib/auth/password";
 import Field from "./AuthField";
-
-const MIN_PASSWORD = 8;
+import PasswordRules, { passwordRulesId } from "./PasswordRules";
 
 type Status = "checking" | "ready" | "expired" | "done";
 type FieldErrors = { password?: string; repeat?: string };
@@ -40,8 +43,8 @@ export default function ResetPasswordForm() {
     setFormError(null);
 
     const errors: FieldErrors = {};
-    if (pass.length < MIN_PASSWORD) {
-      errors.password = `Mínimo ${MIN_PASSWORD} caracteres`;
+    if (!isValidPassword(pass)) {
+      errors.password = PASSWORD_RULE_MESSAGE;
     }
     if (repeat !== pass) {
       errors.repeat = "Las contraseñas no coinciden";
@@ -119,8 +122,10 @@ export default function ResetPasswordForm() {
               onChange={(e) => setPass(e.target.value)}
               placeholder="••••••••"
               autoComplete="new-password"
+              describedBy={passwordRulesId("reset-pass")}
               error={fieldErrors.password}
             />
+            <PasswordRules id="reset-pass" value={pass} />
             <Field
               id="reset-repeat"
               type="password"
